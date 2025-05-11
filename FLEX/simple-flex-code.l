@@ -58,7 +58,7 @@ COMMENT         ;.*
 
 {DELIMITER}     { return DELIMITER; }
 {INTCONST}      { return INTCONST; }
-{DOUBLE}		{ return DOUBLE; }
+{DOUBLE}        { return DOUBLE; }
 {STRING}	 	{ return STRING; }
 {COMMENT}		{ return COMMENT; }
 \n              { line++; printf("\n"); }
