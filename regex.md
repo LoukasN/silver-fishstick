@@ -1,6 +1,6 @@
 For int (signed/unsigned):
 ```
-[-+]?[0-9]+
+0|[-+]?[1-9]+[0-9]*
 ```
 
 For double:
