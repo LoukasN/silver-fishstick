@@ -44,7 +44,10 @@ int line = 1;
 
 DELIMITER       [ \t]+
 INTCONST        0|[+-]?[1-9]+[0-9]*
-VARIABLE	FILLME
+DOUBLE 			([-+]?[0-9]+([eE][0-9]+)?\.([0-9]+)?([eE][-+]?)?[0-9]+)|([-+]?[0-9]+[eE][-+]?[0-9]+)
+STRING 			\"([^\\"]|\\[\\n"])*\"
+COMMENT 		;.*
+
 
 
 /* Gia kathe pattern (aristera) pou tairiazei ekteleitai o antistoixos
@@ -55,14 +58,16 @@ VARIABLE	FILLME
 
 {DELIMITER}     { return DELIMITER; }
 {INTCONST}      { return INTCONST; }
-{VARIABLE}	{ /* FILL ME */ }
+{DOUBLE}		{ return DOUBLE; }
+{STRING}	 	{ return STRING; }
+{COMMENT}		{ return COMMENT; }
 \n              { line++; printf("\n"); }
 <<EOF>>		{ printf("#END-OF-FILE#\n"); exit(0); }
 
 %%
 
 /* Pinakas me ola ta tokens se antistoixia me tous orismous sto token.h */
-char *tname[2] = {"DELIMITER","INTCONST" /*, FILL ME */};
+char *tname[5] = {"DELIMITER", "INTCONST", "DOUBLE", "STRING" , "COMMENT" /*, FILL ME */};
 
 
 /* H synarthsh main: O kwdikas autos tha topotheththei autousios sto
