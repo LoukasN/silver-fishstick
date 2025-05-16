@@ -15,7 +15,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-/* Το header file με αντιστοίχηση των στοιχείων σε αριθμούς */
+/* Το header file με αντιστοίχηση των tokens σε αριθμούς */
 #include "token.h"
 
 /* Μετρητής για τις γραμμές */
