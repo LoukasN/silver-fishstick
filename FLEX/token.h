@@ -3,4 +3,5 @@
 #define DOUBLE 3
 #define STRING 4
 #define COMMENT 5
-/* FILL ME */
+#define VARIABLES 6
+#define NAMES 7
