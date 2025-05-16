@@ -19,12 +19,12 @@ For comment:
 ```
 For delimiter:
 ```
-[\s\t]+
+[ \t]+
 ```
 
 For variables:
 ```
-?[A-Za-z0-9]+
+\?[A-Za-z0-9]+
 ```
 
 For names and definitions:
