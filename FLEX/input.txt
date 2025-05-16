@@ -15,3 +15,16 @@
 
 ;faskdjflkasdjfk\nfasjlk\\
 ;"COMMENT"
+
+?x132143AA
+?3x2B23
+?ABcd1234de
+
+static-facts
+MoveUp
+CUBES
+sum-1
+table
+packman
+A-21-b
+
