@@ -1,5 +1,5 @@
 START=S0
 S0:	\s|\t-> S0
 	* -> BAD
-S1:	\n -> GOOD
+ 	\n -> GOOD
 GOOD(OK):
