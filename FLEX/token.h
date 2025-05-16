@@ -3,5 +3,5 @@
 #define DOUBLE 3
 #define STRING 4
 #define COMMENT 5
-#define VARIABLES 6
-#define NAMES 7
+#define VARIABLE 6
+#define NAME 7

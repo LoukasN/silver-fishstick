@@ -42,13 +42,13 @@ int line = 1;
    Meta apo auto, mporei na ginei xrhsh twn onomatwn (aristera) anti twn,
    synhthws idiaiterws makroskelwn kai dysnohtwn, kanonikwn ekfrasewn */
 
-DELIMITER       [\s\t]+
+DELIMITER       [ \t]+
 INTCONST        0|[+-]?[1-9]+[0-9]*
 DOUBLE          ([-+]?[0-9]+([eE][0-9]+)?\.([0-9]+)?([eE][-+]?)?[0-9]+)|([-+]?[0-9]+[eE][-+]?[0-9]+)
 STRING          \"([^\\"]|\\[\\n"])*\"
 COMMENT         ;.*
-VARIABLES 		?[A-Za-z0-9]+
-NAMES 			[A-Za-z][A-Za-z0-9_-]*
+VARIABLE	    \?[A-Za-z0-9]+
+NAME            [A-Za-z][A-Za-z0-9_-]*
 
 
 
@@ -61,17 +61,17 @@ NAMES 			[A-Za-z][A-Za-z0-9_-]*
 {DELIMITER}     { return DELIMITER; }
 {INTCONST}      { return INTCONST; }
 {DOUBLE}        { return DOUBLE; }
-{STRING}	 	{ return STRING; }
-{COMMENT}		{ return COMMENT; }
-{VARIABLES}		{ return VARIABLES; }}
-{NAMES} 		{ return NAMES; }
+{STRING}        { return STRING; }
+{COMMENT}       { return COMMENT; }
+{VARIABLE}      { return VARIABLE; }
+{NAME}          { return NAME; }
 \n              { line++; printf("\n"); }
-<<EOF>>		    { printf("#END-OF-FILE#\n"); exit(0); }
+<<EOF>>         { printf("#END-OF-FILE#\n"); exit(0); }
 
 %%
 
 /* Pinakas me ola ta tokens se antistoixia me tous orismous sto token.h */
-char *tname[7] = {"DELIMITER", "INTCONST", "DOUBLE", "STRING" , "COMMENT", "VARIABLES", "NAMES"};
+char *tname[7] = {"DELIMITER", "INTCONST", "DOUBLE", "STRING" , "COMMENT", "VARIABLES", "NAME"};
 
 
 /* H synarthsh main: O kwdikas autos tha topotheththei autousios sto
