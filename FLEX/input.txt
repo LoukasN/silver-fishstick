@@ -11,7 +11,9 @@
 "Hello\n"
 "Test\\\n"
 "\"\""
+
 	
+12312 -1.5
 
 ;faskdjflkasdjfk\nfasjlk\\
 ;"COMMENT"
@@ -27,4 +29,3 @@ sum-1
 table
 packman
 A-21-b
-
