@@ -57,19 +57,19 @@ int main(int argc, char **argv){
 
 		/* Πρέπει να δοθεί 1 όνομα αρχείου για διάβασμα ή 2 ονόματα αρχείων για διάβασμα και γράψιμο */
         if(argc == 3){
-				/* Άνοιγμα του αρχείου για διάβασμα */
+                /* Άνοιγμα του αρχείου για διάβασμα */
                 if(!(yyin = fopen(argv[1], "r"))) {
                         fprintf(stderr, "Cannot read file: %s\n", argv[1]);
                         return 1;
                 }
-				/* Άνοιγμα του αρχείου για γράψιμο */
+                /* Άνοιγμα του αρχείου για γράψιμο */
                 if(!(yyout = fopen(argv[2], "w"))) {
                         fprintf(stderr, "Cannot create file: %s\n", argv[2]);
                         return 1;
                 }
         }
         else if(argc == 2){
-				/* Άνοιγμα του αρχείου για διάβασμα */
+                /* Άνοιγμα του αρχείου για διάβασμα */
                 if(!(yyin = fopen(argv[1], "r"))) {
                         fprintf(stderr, "Cannot read file: %s\n", argv[1]);
                         return 1;
