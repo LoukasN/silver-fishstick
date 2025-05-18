@@ -31,3 +31,10 @@ For names and definitions:
 ```
 [A-Za-z][A-Za-z0-9_-]*
 ```
+
+= Comments
+==In all.fsm
+- Could be better -> S2 and S7 is the same (It would take many years to change this oversight)
+- When no connect goes to bad
+- When double circle with \n you go to GOOD
+- This will not work 1e1.3
