@@ -1,0 +1,108 @@
+START=S0
+
+// ROOT (Connects every part)
+S0: ? -> S4
+	A-Z -> S3
+	a-z -> S3
+	; -> S1
+	\s|\t -> S2
+	0 -> S8
+	1-9 -> S10
+	- -> S9
+	+ -> S9
+	" -> S5
+	* -> BAD
+
+// For comments
+S1: \n -> GOOD
+	* -> S1
+
+// For delimiters
+S2: \n -> GOOD
+	* -> BAD
+
+// For names
+S3: A-Z -> S3
+	a-z -> S3
+	0-9 -> S3
+	_ -> S3
+	- -> S3
+	\n -> GOOD
+	* -> BAD
+
+// For variables
+S4: A-Z -> S4
+	a-z -> S4
+	0-9 -> S4
+	\n -> GOOD
+	* -> BAD
+
+// For strings start
+S5: " -> S7
+	\\ -> S6
+	\n -> BAD
+	* -> S5
+
+// Strings content
+S6: \\|n|" -> S5
+	* -> BAD
+
+// Strings end
+S7: \n -> GOOD
+	* -> BAD
+
+// For the integer 0 or double with integer part 0
+S8: \. -> S12
+	e|E -> S14
+	\n -> GOOD
+	* -> BAD
+
+// For -|+ starting integers or doubles
+S9: 0 -> S11
+	1-9 -> S10
+	* -> BAD
+
+// For multi-digit integer or double with integer part
+S10: 0-9 -> S10
+	 \. -> S12
+	 e|E -> S14
+	 \n -> GOOD
+	 * -> BAD
+
+// For doubles starting with -|+0 integer part
+S11: \. -> S12
+	 e|E -> S14
+	 * -> BAD
+
+// First digit of the decimal part of the double
+S12: 0-9 -> S13
+	 * -> BAD
+
+// More of the digits of the decimal part of the double
+S13: 0-9 -> S13
+	 e|E -> S14
+	 \n -> GOOD
+	 * -> BAD
+
+// Number with scientific notation e or E
+S14: 0 -> S15
+	 1-9 -> S17
+	 - -> S16
+	 + -> S16
+	 * -> BAD
+
+// Case in which ...e0
+S15: \n -> GOOD
+	 * -> BAD
+
+// Sign of scientific notation (if needed)
+S16: 1-9 -> S17
+	 * -> BAD
+
+// Rest of the integers of the scientific notation
+S17: 0-9 -> S17
+	 \n -> GOOD
+	 * -> BAD
+
+GOOD(OK):
+
