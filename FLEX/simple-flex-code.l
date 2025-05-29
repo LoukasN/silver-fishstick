@@ -4,7 +4,6 @@
                         input.txt και τα αποτελέσματα τυπώνονται στην οθόνη
 */
 
-/* H anagnwsh periorizetai se ena mono arxeio kai termatizei sto prwto EOF */
 %option noyywrap
 /* Τμήμα ορισμών του προγράμματος */
 
@@ -81,7 +80,7 @@ int main(int argc, char **argv){
 
            π.χ. Για το INTCONST έχουμε:
            {INTCONST}      { return INTCONST; }
-           Άρα θα εκτελεστεί η return INTCONTS
+           Άρα θα εκτελεστεί η return INTCONST
            Στο tokens.h INCONST = 2
            Οπότε η yylex επιστρέφει την τιμή 2
         */
