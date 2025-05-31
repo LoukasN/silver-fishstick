@@ -1,10 +1,13 @@
 START=S0
+// Any number and - or + is accepted
 S0: 0 -> S3
 	[1-9] -> S2
 	-|+ -> S1
 	* -> BAD
+// After - or + number 0 can't be given
 S1: [1-9] -> S2
 	* -> BAD
+// Any number is accepted until \n
 S2: [0-9] -> S2
 	\n -> GOOD
 	* -> BAD

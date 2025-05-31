@@ -1,11 +1,17 @@
 START=S0
+// Must start with "
 S0: " -> S1
 	* -> BAD
+// Any character is acceptable
+// there is a special case for \
 S1: * -> S1
 	\\ -> S2
 	" -> S3
+// If \ is given it must be
+// followed by \ or n or "
 S2: \\|n|" -> S1
 	* -> BAD
+// The last character must be "
 S3: \n -> GOOD
 	* -> BAD
 GOOD(OK):

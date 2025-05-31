@@ -1,7 +1,10 @@
 START=S0
+// Must start with letters (case insensitive)
 S0: A-Z -> S1
 	a-z -> S1
 	*	-> BAD
+// Can be followed by letters, numbers,
+// - and _. Ends with \n
 S1: A-Z -> S1
 	a-z -> S1
 	0-9 -> S1

@@ -1,4 +1,6 @@
 START=S0
+// \s is for spaces
+// \t is tab
 S0:	\s|\t-> S0
 	* -> BAD
  	\n -> GOOD

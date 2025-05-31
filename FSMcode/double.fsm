@@ -1,32 +1,49 @@
 START=S0
+// Number or - or +
 S0: 0 -> S3
 	[1-9] -> S2
 	-|+ -> S1
 	* -> BAD
+// Number following - or +
 S1: 0 -> S3
 	[1-9] -> S2
 	* -> BAD
+// number or floating point
+// or scientific notation
+// after number
 S2: [0-9] -> S2
 	e|E -> S6
 	\. -> S4
 	* -> BAD
+// In case of only 0 it must 
+// be followed by scientific
+// notation or a floating point
 S3: e|E -> S6
 	\. -> S4
 	* -> BAD
+// A number must be given after
+// scientific notation or floating point
 S4: [0-9] -> S5
 	* -> BAD
+// scientific notation can be used
+// if was not previously or numbers
 S5: [0-9] -> S5
 	e|E -> S6
 	\n -> GOOD
 	* -> BAD
+// scientific notation must be followed
+// by a number or a sign
 S6: 0 -> S7
 	[1-9] -> S9
 	-|+ -> S8
 	* -> BAD
+// Ending with e0
 S7: \n -> GOOD
 	* -> BAD
+// Ending with 1..9 after sign
 S8: [1-9] -> S9
 	* -> BAD
+// Ending with many numbers
 S9: [0-9] -> S9
 	\n -> GOOD
 	* -> BAD
