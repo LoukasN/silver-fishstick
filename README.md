@@ -19,7 +19,7 @@ For comment:
 ```
 For delimiter:
 ```
-[ \t]+
+[\s\t]+
 ```
 
 For variables:
