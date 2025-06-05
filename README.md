@@ -10,7 +10,7 @@ For double:
 
 For string:
 ```
-\"([^\\"]|\\[\\n"])*\"
+\"([^\n\\\"]|\\[\\n\"])*\"
 ```
 
 For comment:
