@@ -1,0 +1,312 @@
+Terminals unused in grammar
+
+    DELIMITER
+    COMMENT
+
+
+Rules useless in parser due to conflicts
+
+   16 expr: ε
+
+
+State 1 conflicts: 2 reduce/reduce
+State 3 conflicts: 1 reduce/reduce
+State 4 conflicts: 4 shift/reduce
+State 5 conflicts: 3 shift/reduce
+State 6 conflicts: 1 reduce/reduce
+State 15 conflicts: 4 shift/reduce
+State 18 conflicts: 3 shift/reduce
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: program expr NEWLINE
+    2        | program exprMULT NEWLINE
+    3        | program exprPLUS NEWLINE
+    4        | ε
+
+    5 exprPLUS: INTCONST
+    6         | DOUBLE
+    7         | PLUS exprPLUS exprPLUS
+    8         | ε
+
+    9 exprMULT: INTCONST
+   10         | VARIABLE
+   11         | DOUBLE
+   12         | MULT exprMULT exprMULT
+   13         | ε
+
+   14 expr: NAME
+   15     | STRING
+   16     | ε
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    INTCONST (258) 5 9
+    MULT (259) 12
+    NEWLINE (260) 1 2 3
+    PLUS (261) 7
+    DELIMITER (262)
+    DOUBLE (263) 6 11
+    STRING (264) 15
+    VARIABLE (265) 10
+    NAME (266) 14
+    COMMENT (267)
+
+
+Nonterminals, with rules where they appear
+
+    $accept (13)
+        on left: 0
+    program (14)
+        on left: 1 2 3 4
+        on right: 0 1 2 3
+    exprPLUS (15)
+        on left: 5 6 7 8
+        on right: 3 7
+    exprMULT (16)
+        on left: 9 10 11 12 13
+        on right: 2 12
+    expr (17)
+        on left: 14 15 16
+        on right: 1
+
+
+State 0
+
+    0 $accept: • program $end
+
+    $default  reduce using rule 4 (program)
+
+    program  go to state 1
+
+
+State 1
+
+    0 $accept: program • $end
+    1 program: program • expr NEWLINE
+    2        | program • exprMULT NEWLINE
+    3        | program • exprPLUS NEWLINE
+
+    $end      shift, and go to state 2
+    INTCONST  shift, and go to state 3
+    MULT      shift, and go to state 4
+    PLUS      shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    STRING    shift, and go to state 7
+    VARIABLE  shift, and go to state 8
+    NAME      shift, and go to state 9
+
+    NEWLINE   reduce using rule 8 (exprPLUS)
+    NEWLINE   [reduce using rule 13 (exprMULT)]
+    NEWLINE   [reduce using rule 16 (expr)]
+    $default  reduce using rule 8 (exprPLUS)
+
+    exprPLUS  go to state 10
+    exprMULT  go to state 11
+    expr      go to state 12
+
+
+State 2
+
+    0 $accept: program $end •
+
+    $default  accept
+
+
+State 3
+
+    5 exprPLUS: INTCONST •
+    9 exprMULT: INTCONST •
+
+    NEWLINE   reduce using rule 5 (exprPLUS)
+    NEWLINE   [reduce using rule 9 (exprMULT)]
+    $default  reduce using rule 5 (exprPLUS)
+
+
+State 4
+
+   12 exprMULT: MULT • exprMULT exprMULT
+
+    INTCONST  shift, and go to state 13
+    MULT      shift, and go to state 4
+    DOUBLE    shift, and go to state 14
+    VARIABLE  shift, and go to state 8
+
+    INTCONST  [reduce using rule 13 (exprMULT)]
+    MULT      [reduce using rule 13 (exprMULT)]
+    DOUBLE    [reduce using rule 13 (exprMULT)]
+    VARIABLE  [reduce using rule 13 (exprMULT)]
+    $default  reduce using rule 13 (exprMULT)
+
+    exprMULT  go to state 15
+
+
+State 5
+
+    7 exprPLUS: PLUS • exprPLUS exprPLUS
+
+    INTCONST  shift, and go to state 16
+    PLUS      shift, and go to state 5
+    DOUBLE    shift, and go to state 17
+
+    INTCONST  [reduce using rule 8 (exprPLUS)]
+    PLUS      [reduce using rule 8 (exprPLUS)]
+    DOUBLE    [reduce using rule 8 (exprPLUS)]
+    $default  reduce using rule 8 (exprPLUS)
+
+    exprPLUS  go to state 18
+
+
+State 6
+
+    6 exprPLUS: DOUBLE •
+   11 exprMULT: DOUBLE •
+
+    NEWLINE   reduce using rule 6 (exprPLUS)
+    NEWLINE   [reduce using rule 11 (exprMULT)]
+    $default  reduce using rule 6 (exprPLUS)
+
+
+State 7
+
+   15 expr: STRING •
+
+    $default  reduce using rule 15 (expr)
+
+
+State 8
+
+   10 exprMULT: VARIABLE •
+
+    $default  reduce using rule 10 (exprMULT)
+
+
+State 9
+
+   14 expr: NAME •
+
+    $default  reduce using rule 14 (expr)
+
+
+State 10
+
+    3 program: program exprPLUS • NEWLINE
+
+    NEWLINE  shift, and go to state 19
+
+
+State 11
+
+    2 program: program exprMULT • NEWLINE
+
+    NEWLINE  shift, and go to state 20
+
+
+State 12
+
+    1 program: program expr • NEWLINE
+
+    NEWLINE  shift, and go to state 21
+
+
+State 13
+
+    9 exprMULT: INTCONST •
+
+    $default  reduce using rule 9 (exprMULT)
+
+
+State 14
+
+   11 exprMULT: DOUBLE •
+
+    $default  reduce using rule 11 (exprMULT)
+
+
+State 15
+
+   12 exprMULT: MULT exprMULT • exprMULT
+
+    INTCONST  shift, and go to state 13
+    MULT      shift, and go to state 4
+    DOUBLE    shift, and go to state 14
+    VARIABLE  shift, and go to state 8
+
+    INTCONST  [reduce using rule 13 (exprMULT)]
+    MULT      [reduce using rule 13 (exprMULT)]
+    DOUBLE    [reduce using rule 13 (exprMULT)]
+    VARIABLE  [reduce using rule 13 (exprMULT)]
+    $default  reduce using rule 13 (exprMULT)
+
+    exprMULT  go to state 22
+
+
+State 16
+
+    5 exprPLUS: INTCONST •
+
+    $default  reduce using rule 5 (exprPLUS)
+
+
+State 17
+
+    6 exprPLUS: DOUBLE •
+
+    $default  reduce using rule 6 (exprPLUS)
+
+
+State 18
+
+    7 exprPLUS: PLUS exprPLUS • exprPLUS
+
+    INTCONST  shift, and go to state 16
+    PLUS      shift, and go to state 5
+    DOUBLE    shift, and go to state 17
+
+    INTCONST  [reduce using rule 8 (exprPLUS)]
+    PLUS      [reduce using rule 8 (exprPLUS)]
+    DOUBLE    [reduce using rule 8 (exprPLUS)]
+    $default  reduce using rule 8 (exprPLUS)
+
+    exprPLUS  go to state 23
+
+
+State 19
+
+    3 program: program exprPLUS NEWLINE •
+
+    $default  reduce using rule 3 (program)
+
+
+State 20
+
+    2 program: program exprMULT NEWLINE •
+
+    $default  reduce using rule 2 (program)
+
+
+State 21
+
+    1 program: program expr NEWLINE •
+
+    $default  reduce using rule 1 (program)
+
+
+State 22
+
+   12 exprMULT: MULT exprMULT exprMULT •
+
+    $default  reduce using rule 12 (exprMULT)
+
+
+State 23
+
+    7 exprPLUS: PLUS exprPLUS exprPLUS •
+
+    $default  reduce using rule 7 (exprPLUS)

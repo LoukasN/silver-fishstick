@@ -61,9 +61,9 @@ extern int yydebug;
     DELIMITER = 262,               /* DELIMITER  */
     DOUBLE = 263,                  /* DOUBLE  */
     STRING = 264,                  /* STRING  */
-    COMMENT = 265,                 /* COMMENT  */
-    VARIABLE = 266,                /* VARIABLE  */
-    NAME = 267                     /* NAME  */
+    VARIABLE = 265,                /* VARIABLE  */
+    NAME = 266,                    /* NAME  */
+    COMMENT = 267                  /* COMMENT  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif

@@ -1,5 +1,5 @@
 all:
-	bison -d -o simple-bison-code.c simple-bison-code.y
+	bison -d -o simple-bison-code.c simple-bison-code.y --verbose
 	flex -o simple-flex-code.c simple-flex-code.l
 	gcc -o simple-bison-code simple-bison-code.c simple-flex-code.c
 clean:

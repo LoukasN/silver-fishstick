@@ -28,10 +28,14 @@ NAME            [A-Za-z][A-Za-z0-9_-]*
 
 %%
 {DELIMITER}     { return DELIMITER; }
-{INTCONST}      { return INTCONST; }
-{DOUBLE}        { return DOUBLE; }
+{INTCONST}      { yylval = atoi(yytext); return INTCONST; }
+{DOUBLE}        { yylval = atol(yytext); return DOUBLE; }
 {STRING}        { return STRING; }
 {COMMENT}       { return COMMENT; }
 {VARIABLE}      { return VARIABLE; }
 {NAME}          { return NAME; }
+
+\+              { return PLUS; }
+\*              { return MULT; }
+\n              { return NEWLINE; }
 %%

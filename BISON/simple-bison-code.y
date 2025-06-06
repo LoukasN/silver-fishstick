@@ -25,39 +25,49 @@
 %}
 
 /* Orismos twn anagnwrisimwn lektikwn monadwn. */
-%token INTCONST MULT NEWLINE PLUS DELIMITER DOUBLE STRING COMMENT VARIABLE NAME
+%token INTCONST MULT NEWLINE PLUS DELIMITER DOUBLE STRING VARIABLE NAME COMMENT
 /* Orismos proteraiothtwn sta tokens */
 %left MULT
-%left PLUS
 
+%start program
 %%
-
 /* Orismos twn grammatikwn kanonwn. Kathe fora pou antistoixizetai enas grammatikos
    kanonas me ta dedomena eisodou, ekteleitai o kwdikas C pou brisketai anamesa sta
    agkistra. H anamenomenh syntaksh einai:
 				onoma : kanonas { kwdikas C } */
 program:
-        program expr NEWLINE { printf("%d\n", $2); }
+        program expr NEWLINE { printf("EXPR %d\n", $2); }
+        |
+        program exprMULT NEWLINE { printf("%d\n", $2); }
+        |
+        program exprPLUS NEWLINE { printf("PLUS %d\n", $2); }
         |
         ;
-expr:
+exprPLUS:
         INTCONST         { $$ = $1; }
-        | 
-        MULT expr expr { $$ = $2 * $3; }
-        | 
-        PLUS expr expr { $$ = $2 + $3; }
         |
-/* FILL ME */
+        DOUBLE           { $$ = $1; }
+        |
+        PLUS exprPLUS exprPLUS   { $$ = $2 + $3; }
+        | 
         ;
+exprMULT:
+        INTCONST         { $$ = $1; }
+        |
+        VARIABLE         { $$ = $1; }
+        |
+        DOUBLE           { $$ = $1; }
+        |
+        MULT exprMULT exprMULT   { $$ = $2 * $3; }
+        | 
+        ;
+expr: 
+    NAME { printf("test"); $$ = $1; }
+    |
+    STRING {$$ = $1;}
+    |
+    ;
 %%
-
-/* H synarthsh yylex ylopoiei enan autonomo lektiko analyth. Edw anagnwrizontai
-   oi lektikes monades ths glwssas Uni-CLIPS */
-int yylex() {
-	// Gia otidhpote allo kalese thn yyerror me mhnyma lathous
-	yyerror("invalid character");
-}
-
 
 /* H synarthsh yyerror xrhsimopoieitai gia thn anafora sfalmatwn. Sygkekrimena kaleitai
    apo thn yyparse otan yparksei kapoio syntaktiko lathos. Sthn parakatw periptwsh h
