@@ -1,0 +1,6 @@
+all:
+	bison -d -o simple-bison-code.c simple-bison-code.y
+	flex -o simple-flex-code.c simple-flex-code.l
+	gcc -o simple-bison-code simple-bison-code.c simple-flex-code.c
+clean:
+	rm simple-bison-code.c simple-bison-code simple-bison-code.h simple-flex-code.c
