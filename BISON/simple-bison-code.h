@@ -55,22 +55,45 @@ extern int yydebug;
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
     INTCONST = 258,                /* INTCONST  */
-    MULT = 259,                    /* MULT  */
-    NEWLINE = 260,                 /* NEWLINE  */
-    PLUS = 261,                    /* PLUS  */
-    DELIMITER = 262,               /* DELIMITER  */
-    DOUBLE = 263,                  /* DOUBLE  */
-    STRING = 264,                  /* STRING  */
-    VARIABLE = 265,                /* VARIABLE  */
-    NAME = 266,                    /* NAME  */
-    COMMENT = 267                  /* COMMENT  */
+    DOUBLE = 259,                  /* DOUBLE  */
+    VARIABLE = 260,                /* VARIABLE  */
+    STRING = 261,                  /* STRING  */
+    NAME = 262,                    /* NAME  */
+    COMMENT = 263,                 /* COMMENT  */
+    BIND = 264,                    /* BIND  */
+    TEST = 265,                    /* TEST  */
+    READ = 266,                    /* READ  */
+    DEFFACTS = 267,                /* DEFFACTS  */
+    DEFRULE = 268,                 /* DEFRULE  */
+    PRINTOUT = 269,                /* PRINTOUT  */
+    PLUS = 270,                    /* PLUS  */
+    DELIMITER = 271,               /* DELIMITER  */
+    NEWLINE = 272,                 /* NEWLINE  */
+    MINUS = 273,                   /* MINUS  */
+    MULT = 274,                    /* MULT  */
+    DIV = 275,                     /* DIV  */
+    EQUALS = 276,                  /* EQUALS  */
+    LPAR = 277,                    /* LPAR  */
+    RPAR = 278,                    /* RPAR  */
+    TOKEN_ERROR = 279              /* TOKEN_ERROR  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+union YYSTYPE
+{
+#line 28 "simple-bison-code.y"
+
+    int intVal;
+    double doubleVal;
+    char *strVal;
+
+#line 94 "simple-bison-code.h"
+
+};
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

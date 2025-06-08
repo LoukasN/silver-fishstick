@@ -67,14 +67,17 @@
 
 
 /* First part of user prologue.  */
-#line 20 "simple-bison-code.y"
+#line 18 "simple-bison-code.y"
 
     #include <stdio.h>
     #include <stdlib.h>
     int yylex();
-    void yyerror(char *);
+    void yyerror(const char *msg);
+    int countCorrectExpr = 0, countWrongExpressions = 0;
+    extern int line, countWrongTokens, countCorrectTokens;
+    extern char* yytext;
 
-#line 78 "simple-bison-code.c"
+#line 81 "simple-bison-code.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -106,20 +109,40 @@ enum yysymbol_kind_t
   YYSYMBOL_YYerror = 1,                    /* error  */
   YYSYMBOL_YYUNDEF = 2,                    /* "invalid token"  */
   YYSYMBOL_INTCONST = 3,                   /* INTCONST  */
-  YYSYMBOL_MULT = 4,                       /* MULT  */
-  YYSYMBOL_NEWLINE = 5,                    /* NEWLINE  */
-  YYSYMBOL_PLUS = 6,                       /* PLUS  */
-  YYSYMBOL_DELIMITER = 7,                  /* DELIMITER  */
-  YYSYMBOL_DOUBLE = 8,                     /* DOUBLE  */
-  YYSYMBOL_STRING = 9,                     /* STRING  */
-  YYSYMBOL_VARIABLE = 10,                  /* VARIABLE  */
-  YYSYMBOL_NAME = 11,                      /* NAME  */
-  YYSYMBOL_COMMENT = 12,                   /* COMMENT  */
-  YYSYMBOL_YYACCEPT = 13,                  /* $accept  */
-  YYSYMBOL_program = 14,                   /* program  */
-  YYSYMBOL_exprPLUS = 15,                  /* exprPLUS  */
-  YYSYMBOL_exprMULT = 16,                  /* exprMULT  */
-  YYSYMBOL_expr = 17                       /* expr  */
+  YYSYMBOL_DOUBLE = 4,                     /* DOUBLE  */
+  YYSYMBOL_VARIABLE = 5,                   /* VARIABLE  */
+  YYSYMBOL_STRING = 6,                     /* STRING  */
+  YYSYMBOL_NAME = 7,                       /* NAME  */
+  YYSYMBOL_COMMENT = 8,                    /* COMMENT  */
+  YYSYMBOL_BIND = 9,                       /* BIND  */
+  YYSYMBOL_TEST = 10,                      /* TEST  */
+  YYSYMBOL_READ = 11,                      /* READ  */
+  YYSYMBOL_DEFFACTS = 12,                  /* DEFFACTS  */
+  YYSYMBOL_DEFRULE = 13,                   /* DEFRULE  */
+  YYSYMBOL_PRINTOUT = 14,                  /* PRINTOUT  */
+  YYSYMBOL_PLUS = 15,                      /* PLUS  */
+  YYSYMBOL_DELIMITER = 16,                 /* DELIMITER  */
+  YYSYMBOL_NEWLINE = 17,                   /* NEWLINE  */
+  YYSYMBOL_MINUS = 18,                     /* MINUS  */
+  YYSYMBOL_MULT = 19,                      /* MULT  */
+  YYSYMBOL_DIV = 20,                       /* DIV  */
+  YYSYMBOL_EQUALS = 21,                    /* EQUALS  */
+  YYSYMBOL_LPAR = 22,                      /* LPAR  */
+  YYSYMBOL_RPAR = 23,                      /* RPAR  */
+  YYSYMBOL_TOKEN_ERROR = 24,               /* TOKEN_ERROR  */
+  YYSYMBOL_YYACCEPT = 25,                  /* $accept  */
+  YYSYMBOL_program = 26,                   /* program  */
+  YYSYMBOL_exprINT = 27,                   /* exprINT  */
+  YYSYMBOL_exprDOUBLE = 28,                /* exprDOUBLE  */
+  YYSYMBOL_exprEQUALS = 29,                /* exprEQUALS  */
+  YYSYMBOL_exprBIND = 30,                  /* exprBIND  */
+  YYSYMBOL_exprTEST = 31,                  /* exprTEST  */
+  YYSYMBOL_exprEVENTS = 32,                /* exprEVENTS  */
+  YYSYMBOL_exprEVENT = 33,                 /* exprEVENT  */
+  YYSYMBOL_exprDEFFACTS = 34,              /* exprDEFFACTS  */
+  YYSYMBOL_exprDEFRULE = 35,               /* exprDEFRULE  */
+  YYSYMBOL_exprPRINTOUT = 36,              /* exprPRINTOUT  */
+  YYSYMBOL_expr = 37                       /* expr  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -236,7 +259,7 @@ typedef int yytype_uint16;
 
 
 /* Stored state numbers (used for stacks). */
-typedef yytype_int8 yy_state_t;
+typedef yytype_uint8 yy_state_t;
 
 /* State numbers in computations.  */
 typedef int yy_state_fast_t;
@@ -447,19 +470,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  2
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   23
+#define YYLAST   195
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  13
+#define YYNTOKENS  25
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  5
+#define YYNNTS  13
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  17
+#define YYNRULES  71
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  24
+#define YYNSTATES  170
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   267
+#define YYMAXUTOK   279
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -499,15 +522,22 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8,     9,    10,    11,    12
+       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_int8 yyrline[] =
+static const yytype_uint8 yyrline[] =
 {
-       0,    39,    39,    41,    43,    44,    47,    49,    51,    52,
-      55,    57,    59,    61,    62,    65,    67,    68
+       0,    56,    56,    57,    58,    59,    60,    61,    62,    63,
+      64,    65,    66,    67,    70,    71,    72,    73,    74,    75,
+      76,    77,    78,    79,    80,    81,    82,    83,    84,    85,
+      86,    90,    91,    92,    93,    94,    95,    96,    97,    98,
+      99,   100,   101,   102,   106,   107,   108,   109,   110,   111,
+     115,   116,   117,   118,   119,   123,   124,   125,   126,   127,
+     128,   129,   134,   135,   136,   140,   144,   148,   152,   156,
+     157,   158
 };
 #endif
 
@@ -523,9 +553,13 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "\"end of file\"", "error", "\"invalid token\"", "INTCONST", "MULT",
-  "NEWLINE", "PLUS", "DELIMITER", "DOUBLE", "STRING", "VARIABLE", "NAME",
-  "COMMENT", "$accept", "program", "exprPLUS", "exprMULT", "expr", YY_NULLPTR
+  "\"end of file\"", "error", "\"invalid token\"", "INTCONST", "DOUBLE",
+  "VARIABLE", "STRING", "NAME", "COMMENT", "BIND", "TEST", "READ",
+  "DEFFACTS", "DEFRULE", "PRINTOUT", "PLUS", "DELIMITER", "NEWLINE",
+  "MINUS", "MULT", "DIV", "EQUALS", "LPAR", "RPAR", "TOKEN_ERROR",
+  "$accept", "program", "exprINT", "exprDOUBLE", "exprEQUALS", "exprBIND",
+  "exprTEST", "exprEVENTS", "exprEVENT", "exprDEFFACTS", "exprDEFRULE",
+  "exprPRINTOUT", "expr", YY_NULLPTR
 };
 
 static const char *
@@ -535,7 +569,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-6)
+#define YYPACT_NINF (-17)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -547,11 +581,25 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-static const yytype_int8 yypact[] =
+static const yytype_int16 yypact[] =
 {
-      -6,     1,    -6,    -6,    12,    15,    -6,    -6,    -6,    -6,
-      -3,     3,    14,    -6,    -6,    12,    -6,    -6,    15,    -6,
-      -6,    -6,    -6,    -6
+     -17,    66,   -17,    -5,   -17,   -17,   -17,   -17,   -17,   -17,
+     -17,   -17,   -17,    42,    42,    42,    42,    84,    27,    28,
+      41,    56,    65,    72,    81,    93,    96,   124,   -17,    23,
+     103,    42,   103,    42,   103,    42,   103,    42,   -17,   -17,
+       4,    34,    60,    87,    14,     1,    54,    55,    91,    18,
+     -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,
+     -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,
+     -17,   -17,   106,   121,    80,   122,   125,   126,   130,   131,
+     134,     8,    25,   135,    26,   -16,   -17,    18,   -17,   119,
+     120,   123,   127,   128,   129,   132,   133,   136,   137,   138,
+     139,   140,   141,   142,   143,   144,   145,   146,   147,   148,
+     149,   150,   151,    97,    11,    99,   152,   -17,   -17,   -17,
+     -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,
+     -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,
+     -17,   153,   154,   155,   174,   175,    92,   158,   159,   160,
+     161,   162,   163,   164,   165,   166,   -17,   -17,   -17,   -17,
+     167,   168,   169,   170,   171,   -17,   -17,   -17,   -17,   -17
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -559,61 +607,137 @@ static const yytype_int8 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       5,     9,     1,     6,    14,     9,     7,    16,    11,    15,
-       0,     0,     0,    10,    12,    14,     6,     7,     9,     4,
-       3,     2,    13,     8
+      13,     0,     1,     0,    31,    69,    70,    71,    50,    55,
+      66,    67,    68,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,    12,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,    63,    62,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       9,    10,    11,     3,     4,     5,     6,     7,     8,     2,
+      33,    34,    32,    36,    37,    35,    39,    40,    38,    42,
+      43,    41,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,    65,     0,    64,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,    14,    16,    15,
+      17,    18,    19,    21,    20,    22,    23,    25,    24,    26,
+      27,    29,    28,    30,    45,    48,    44,    46,    49,    47,
+      51,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,    56,    54,    52,    53,
+       0,     0,     0,     0,     0,    58,    59,    57,    60,    61
 };
 
 /* YYPGOTO[NTERM-NUM].  */
-static const yytype_int8 yypgoto[] =
+static const yytype_int16 yypgoto[] =
 {
-      -6,    -6,    -5,    -1,    -6
+     -17,   -17,   -13,    19,    59,   156,   157,    98,   194,   -17,
+     -17,   -17,   -17
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     1,    10,    11,    12
+       0,     1,    18,    19,    20,    46,    47,    48,    49,    24,
+      25,    26,    27
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
    positive, shift that token.  If negative, reduce the rule whose
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
-static const yytype_int8 yytable[] =
+static const yytype_uint8 yytable[] =
 {
-      18,     2,    19,    15,     3,     4,     0,     5,    20,     6,
-       7,     8,     9,    23,    22,    13,     4,     0,    16,    21,
-      14,     5,     8,    17
+      30,    32,    34,    36,    38,   114,   115,    72,    39,    73,
+       8,     9,    28,   106,   144,   145,   146,    81,    61,    82,
+      64,    38,    67,    45,    70,    39,    29,    74,   108,   112,
+      29,    83,    31,    33,    35,    37,    29,    75,    40,    76,
+      87,    41,    42,    43,    50,    51,     4,    29,   113,    60,
+      62,    63,    65,    66,    68,    69,    71,    13,    52,    84,
+      14,    15,    16,    77,    29,    78,     2,     3,   107,   109,
+       4,     5,     6,    53,     7,     8,     9,    85,    10,    11,
+      12,    13,    54,    93,    14,    15,    16,    38,    17,    55,
+      79,    39,    80,     8,     9,   153,   154,   155,    56,    40,
+     142,     4,    41,    42,    43,    44,    45,     4,   141,    89,
+      57,    90,    13,    58,    86,    14,    15,    16,    13,    29,
+      44,    14,    15,    16,    91,    94,    92,    95,    96,    98,
+      97,    99,   143,   100,   102,   101,   103,   104,   110,   105,
+     111,    59,   117,   118,   116,     0,   119,    88,     0,     0,
+     120,   121,   122,     0,     0,   123,   124,    21,    22,   125,
+     126,   127,   128,   129,   130,   131,   132,   133,   134,   135,
+     136,   137,   138,   139,   140,   147,   148,   149,   150,   151,
+     152,   156,   157,   158,   159,   160,   161,   162,   163,   164,
+     165,   166,   167,   168,   169,    23
 };
 
 static const yytype_int8 yycheck[] =
 {
-       5,     0,     5,     4,     3,     4,    -1,     6,     5,     8,
-       9,    10,    11,    18,    15,     3,     4,    -1,     3,     5,
-       8,     6,    10,     8
+      13,    14,    15,    16,     3,    21,    22,     3,     7,     5,
+       9,    10,    17,     5,     3,     4,     5,     3,    31,     5,
+      33,     3,    35,    22,    37,     7,    22,    40,     3,     3,
+      22,    44,    13,    14,    15,    16,    22,     3,    15,     5,
+      22,    18,    19,    20,    17,    17,     4,    22,    22,    30,
+      31,    32,    33,    34,    35,    36,    37,    15,    17,     5,
+      18,    19,    20,     3,    22,     5,     0,     1,    81,    82,
+       4,     5,     6,    17,     8,     9,    10,    22,    12,    13,
+      14,    15,    17,     3,    18,    19,    20,     3,    22,    17,
+       3,     7,     5,     9,    10,     3,     4,     5,    17,    15,
+     113,     4,    18,    19,    20,    21,    22,     4,    11,     3,
+      17,     5,    15,    17,    23,    18,    19,    20,    15,    22,
+      21,    18,    19,    20,     3,     3,     5,     5,     3,     3,
+       5,     5,   113,     3,     3,     5,     5,     3,     3,     5,
+       5,    17,    23,    23,    85,    -1,    23,    49,    -1,    -1,
+      23,    23,    23,    -1,    -1,    23,    23,     1,     1,    23,
+      23,    23,    23,    23,    23,    23,    23,    23,    23,    23,
+      23,    23,    23,    23,    23,    23,    23,    23,    23,     5,
+       5,    23,    23,    23,    23,    23,    23,    23,    23,    23,
+      23,    23,    23,    23,    23,     1
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    14,     0,     3,     4,     6,     8,     9,    10,    11,
-      15,    16,    17,     3,     8,    16,     3,     8,    15,     5,
-       5,     5,    16,    15
+       0,    26,     0,     1,     4,     5,     6,     8,     9,    10,
+      12,    13,    14,    15,    18,    19,    20,    22,    27,    28,
+      29,    30,    31,    33,    34,    35,    36,    37,    17,    22,
+      27,    28,    27,    28,    27,    28,    27,    28,     3,     7,
+      15,    18,    19,    20,    21,    22,    30,    31,    32,    33,
+      17,    17,    17,    17,    17,    17,    17,    17,    17,    17,
+      28,    27,    28,    28,    27,    28,    28,    27,    28,    28,
+      27,    28,     3,     5,    27,     3,     5,     3,     5,     3,
+       5,     3,     5,    27,     5,    22,    23,    22,    32,     3,
+       5,     3,     5,     3,     3,     5,     3,     5,     3,     5,
+       3,     5,     3,     5,     3,     5,     5,    27,     3,    27,
+       3,     5,     3,    22,    21,    22,    29,    23,    23,    23,
+      23,    23,    23,    23,    23,    23,    23,    23,    23,    23,
+      23,    23,    23,    23,    23,    23,    23,    23,    23,    23,
+      23,    11,    27,    28,     3,     4,     5,    23,    23,    23,
+      23,     5,     5,     3,     4,     5,    23,    23,    23,    23,
+      23,    23,    23,    23,    23,    23,    23,    23,    23,    23
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    13,    14,    14,    14,    14,    15,    15,    15,    15,
-      16,    16,    16,    16,    16,    17,    17,    17
+       0,    25,    26,    26,    26,    26,    26,    26,    26,    26,
+      26,    26,    26,    26,    27,    27,    27,    27,    27,    27,
+      27,    27,    27,    27,    27,    27,    27,    27,    27,    27,
+      27,    28,    28,    28,    28,    28,    28,    28,    28,    28,
+      28,    28,    28,    28,    29,    29,    29,    29,    29,    29,
+      30,    30,    30,    30,    30,    31,    31,    31,    31,    31,
+      31,    31,    32,    32,    32,    33,    34,    35,    36,    37,
+      37,    37
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     3,     3,     3,     0,     1,     1,     3,     0,
-       1,     1,     1,     3,     0,     1,     1,     0
+       0,     2,     3,     3,     3,     3,     3,     3,     3,     3,
+       3,     3,     3,     0,     5,     5,     5,     5,     5,     5,
+       5,     5,     5,     5,     5,     5,     5,     5,     5,     5,
+       5,     1,     3,     3,     3,     3,     3,     3,     3,     3,
+       3,     3,     3,     3,     5,     5,     5,     5,     5,     5,
+       1,     5,     7,     7,     7,     1,     6,     8,     8,     8,
+       8,     8,     1,     1,     2,     3,     1,     1,     1,     1,
+       1,     1
 };
 
 
@@ -1077,79 +1201,421 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* program: program expr NEWLINE  */
-#line 39 "simple-bison-code.y"
-                             { printf("EXPR %d\n", yyvsp[-1]); }
-#line 1083 "simple-bison-code.c"
+#line 56 "simple-bison-code.y"
+                             { printf("expr %s\n", (yyvsp[-1].strVal)); countCorrectExpr++; }
+#line 1207 "simple-bison-code.c"
     break;
 
-  case 3: /* program: program exprMULT NEWLINE  */
-#line 41 "simple-bison-code.y"
-                                 { printf("%d\n", yyvsp[-1]); }
-#line 1089 "simple-bison-code.c"
-    break;
-
-  case 4: /* program: program exprPLUS NEWLINE  */
-#line 43 "simple-bison-code.y"
-                                 { printf("PLUS %d\n", yyvsp[-1]); }
-#line 1095 "simple-bison-code.c"
-    break;
-
-  case 6: /* exprPLUS: INTCONST  */
-#line 47 "simple-bison-code.y"
-                         { yyval = yyvsp[0]; }
-#line 1101 "simple-bison-code.c"
-    break;
-
-  case 7: /* exprPLUS: DOUBLE  */
-#line 49 "simple-bison-code.y"
-                         { yyval = yyvsp[0]; }
-#line 1107 "simple-bison-code.c"
-    break;
-
-  case 8: /* exprPLUS: PLUS exprPLUS exprPLUS  */
-#line 51 "simple-bison-code.y"
-                                 { yyval = yyvsp[-1] + yyvsp[0]; }
-#line 1113 "simple-bison-code.c"
-    break;
-
-  case 10: /* exprMULT: INTCONST  */
-#line 55 "simple-bison-code.y"
-                         { yyval = yyvsp[0]; }
-#line 1119 "simple-bison-code.c"
-    break;
-
-  case 11: /* exprMULT: VARIABLE  */
+  case 3: /* program: program exprBIND NEWLINE  */
 #line 57 "simple-bison-code.y"
-                         { yyval = yyvsp[0]; }
-#line 1125 "simple-bison-code.c"
+                                   { countCorrectExpr++; }
+#line 1213 "simple-bison-code.c"
     break;
 
-  case 12: /* exprMULT: DOUBLE  */
+  case 4: /* program: program exprTEST NEWLINE  */
+#line 58 "simple-bison-code.y"
+                                   { countCorrectExpr++; }
+#line 1219 "simple-bison-code.c"
+    break;
+
+  case 5: /* program: program exprEVENT NEWLINE  */
 #line 59 "simple-bison-code.y"
-                         { yyval = yyvsp[0]; }
-#line 1131 "simple-bison-code.c"
+                                    { printf("%s\n", (yyvsp[-1].strVal)); countCorrectExpr++; }
+#line 1225 "simple-bison-code.c"
     break;
 
-  case 13: /* exprMULT: MULT exprMULT exprMULT  */
+  case 6: /* program: program exprDEFFACTS NEWLINE  */
+#line 60 "simple-bison-code.y"
+                                       { printf("%s\n", (yyvsp[-1].strVal)); countCorrectExpr++; }
+#line 1231 "simple-bison-code.c"
+    break;
+
+  case 7: /* program: program exprDEFRULE NEWLINE  */
 #line 61 "simple-bison-code.y"
-                                 { yyval = yyvsp[-1] * yyvsp[0]; }
-#line 1137 "simple-bison-code.c"
+                                      { printf("%s\n", (yyvsp[-1].strVal)); countCorrectExpr++; }
+#line 1237 "simple-bison-code.c"
     break;
 
-  case 15: /* expr: NAME  */
+  case 8: /* program: program exprPRINTOUT NEWLINE  */
+#line 62 "simple-bison-code.y"
+                                       { printf("%s\n", (yyvsp[-1].strVal)); countCorrectExpr++; }
+#line 1243 "simple-bison-code.c"
+    break;
+
+  case 9: /* program: program exprINT NEWLINE  */
+#line 63 "simple-bison-code.y"
+                                  { printf("%d\n", (yyvsp[-1].intVal)); countCorrectExpr++; }
+#line 1249 "simple-bison-code.c"
+    break;
+
+  case 10: /* program: program exprDOUBLE NEWLINE  */
+#line 64 "simple-bison-code.y"
+                                     { countCorrectExpr++; }
+#line 1255 "simple-bison-code.c"
+    break;
+
+  case 11: /* program: program exprEQUALS NEWLINE  */
 #line 65 "simple-bison-code.y"
-         { printf("test"); yyval = yyvsp[0]; }
-#line 1143 "simple-bison-code.c"
+                                     { countCorrectExpr++; }
+#line 1261 "simple-bison-code.c"
     break;
 
-  case 16: /* expr: STRING  */
-#line 67 "simple-bison-code.y"
-           {yyval = yyvsp[0];}
-#line 1149 "simple-bison-code.c"
+  case 12: /* program: program error NEWLINE  */
+#line 66 "simple-bison-code.y"
+                                { countWrongExpressions++; }
+#line 1267 "simple-bison-code.c"
+    break;
+
+  case 14: /* exprINT: LPAR PLUS INTCONST INTCONST RPAR  */
+#line 70 "simple-bison-code.y"
+                                         { }
+#line 1273 "simple-bison-code.c"
+    break;
+
+  case 15: /* exprINT: LPAR PLUS VARIABLE INTCONST RPAR  */
+#line 71 "simple-bison-code.y"
+                                           { }
+#line 1279 "simple-bison-code.c"
+    break;
+
+  case 16: /* exprINT: LPAR PLUS INTCONST VARIABLE RPAR  */
+#line 72 "simple-bison-code.y"
+                                           { }
+#line 1285 "simple-bison-code.c"
+    break;
+
+  case 17: /* exprINT: LPAR PLUS VARIABLE VARIABLE RPAR  */
+#line 73 "simple-bison-code.y"
+                                           { }
+#line 1291 "simple-bison-code.c"
+    break;
+
+  case 18: /* exprINT: LPAR PLUS exprINT INTCONST RPAR  */
+#line 74 "simple-bison-code.y"
+                                          { (yyval.intVal) = (yyvsp[-2].intVal) + (yyvsp[-1].intVal); }
+#line 1297 "simple-bison-code.c"
+    break;
+
+  case 19: /* exprINT: LPAR MINUS INTCONST INTCONST RPAR  */
+#line 75 "simple-bison-code.y"
+                                             { (yyval.intVal) = (yyvsp[-2].intVal) - (yyvsp[-1].intVal); }
+#line 1303 "simple-bison-code.c"
+    break;
+
+  case 20: /* exprINT: LPAR MINUS VARIABLE INTCONST RPAR  */
+#line 76 "simple-bison-code.y"
+                                            { }
+#line 1309 "simple-bison-code.c"
+    break;
+
+  case 21: /* exprINT: LPAR MINUS INTCONST VARIABLE RPAR  */
+#line 77 "simple-bison-code.y"
+                                            { }
+#line 1315 "simple-bison-code.c"
+    break;
+
+  case 22: /* exprINT: LPAR MINUS VARIABLE VARIABLE RPAR  */
+#line 78 "simple-bison-code.y"
+                                            { }
+#line 1321 "simple-bison-code.c"
+    break;
+
+  case 23: /* exprINT: LPAR MULT INTCONST INTCONST RPAR  */
+#line 79 "simple-bison-code.y"
+                                          { (yyval.intVal) = (yyvsp[-2].intVal) * (yyvsp[-1].intVal); }
+#line 1327 "simple-bison-code.c"
+    break;
+
+  case 24: /* exprINT: LPAR MULT VARIABLE INTCONST RPAR  */
+#line 80 "simple-bison-code.y"
+                                          { }
+#line 1333 "simple-bison-code.c"
+    break;
+
+  case 25: /* exprINT: LPAR MULT INTCONST VARIABLE RPAR  */
+#line 81 "simple-bison-code.y"
+                                          { }
+#line 1339 "simple-bison-code.c"
+    break;
+
+  case 26: /* exprINT: LPAR MULT VARIABLE VARIABLE RPAR  */
+#line 82 "simple-bison-code.y"
+                                           { }
+#line 1345 "simple-bison-code.c"
+    break;
+
+  case 27: /* exprINT: LPAR DIV INTCONST INTCONST RPAR  */
+#line 83 "simple-bison-code.y"
+                                          { (yyval.intVal) = (yyvsp[-2].intVal) / (yyvsp[-1].intVal); }
+#line 1351 "simple-bison-code.c"
+    break;
+
+  case 28: /* exprINT: LPAR DIV VARIABLE INTCONST RPAR  */
+#line 84 "simple-bison-code.y"
+                                         { }
+#line 1357 "simple-bison-code.c"
+    break;
+
+  case 29: /* exprINT: LPAR DIV INTCONST VARIABLE RPAR  */
+#line 85 "simple-bison-code.y"
+                                         { }
+#line 1363 "simple-bison-code.c"
+    break;
+
+  case 30: /* exprINT: LPAR DIV VARIABLE VARIABLE RPAR  */
+#line 86 "simple-bison-code.y"
+                                          { }
+#line 1369 "simple-bison-code.c"
+    break;
+
+  case 31: /* exprDOUBLE: DOUBLE  */
+#line 90 "simple-bison-code.y"
+               { (yyval.doubleVal) = (yyvsp[0].doubleVal); }
+#line 1375 "simple-bison-code.c"
+    break;
+
+  case 32: /* exprDOUBLE: PLUS exprDOUBLE exprDOUBLE  */
+#line 91 "simple-bison-code.y"
+                                     { (yyval.doubleVal) = (yyvsp[-1].doubleVal) + (yyvsp[0].doubleVal); }
+#line 1381 "simple-bison-code.c"
+    break;
+
+  case 33: /* exprDOUBLE: PLUS exprINT exprDOUBLE  */
+#line 92 "simple-bison-code.y"
+                                  { (yyval.doubleVal) = (yyvsp[-1].intVal) + (yyvsp[0].doubleVal); }
+#line 1387 "simple-bison-code.c"
+    break;
+
+  case 34: /* exprDOUBLE: PLUS exprDOUBLE exprINT  */
+#line 93 "simple-bison-code.y"
+                                  { (yyval.doubleVal) = (yyvsp[-1].doubleVal) + (yyvsp[0].intVal); }
+#line 1393 "simple-bison-code.c"
+    break;
+
+  case 35: /* exprDOUBLE: MINUS exprDOUBLE exprDOUBLE  */
+#line 94 "simple-bison-code.y"
+                                        { (yyval.doubleVal) = (yyvsp[-1].doubleVal) - (yyvsp[0].doubleVal); }
+#line 1399 "simple-bison-code.c"
+    break;
+
+  case 36: /* exprDOUBLE: MINUS exprINT exprDOUBLE  */
+#line 95 "simple-bison-code.y"
+                                     { (yyval.doubleVal) = (yyvsp[-1].intVal) - (yyvsp[0].doubleVal); }
+#line 1405 "simple-bison-code.c"
+    break;
+
+  case 37: /* exprDOUBLE: MINUS exprDOUBLE exprINT  */
+#line 96 "simple-bison-code.y"
+                                     { (yyval.doubleVal) = (yyvsp[-1].doubleVal) - (yyvsp[0].intVal); }
+#line 1411 "simple-bison-code.c"
+    break;
+
+  case 38: /* exprDOUBLE: MULT exprDOUBLE exprDOUBLE  */
+#line 97 "simple-bison-code.y"
+                                       { (yyval.doubleVal) = (yyvsp[-1].doubleVal) * (yyvsp[0].doubleVal); }
+#line 1417 "simple-bison-code.c"
+    break;
+
+  case 39: /* exprDOUBLE: MULT exprINT exprDOUBLE  */
+#line 98 "simple-bison-code.y"
+                                    { (yyval.doubleVal) = (yyvsp[-1].intVal) * (yyvsp[0].doubleVal); }
+#line 1423 "simple-bison-code.c"
+    break;
+
+  case 40: /* exprDOUBLE: MULT exprDOUBLE exprINT  */
+#line 99 "simple-bison-code.y"
+                                    { (yyval.doubleVal) = (yyvsp[-1].doubleVal) * (yyvsp[0].intVal); }
+#line 1429 "simple-bison-code.c"
+    break;
+
+  case 41: /* exprDOUBLE: DIV exprDOUBLE exprDOUBLE  */
+#line 100 "simple-bison-code.y"
+                                      { (yyval.doubleVal) = (yyvsp[-1].doubleVal) / (yyvsp[0].doubleVal); }
+#line 1435 "simple-bison-code.c"
+    break;
+
+  case 42: /* exprDOUBLE: DIV exprINT exprDOUBLE  */
+#line 101 "simple-bison-code.y"
+                                   { (yyval.doubleVal) = (yyvsp[-1].intVal) / (yyvsp[0].doubleVal); }
+#line 1441 "simple-bison-code.c"
+    break;
+
+  case 43: /* exprDOUBLE: DIV exprDOUBLE exprINT  */
+#line 102 "simple-bison-code.y"
+                                   { (yyval.doubleVal) = (yyvsp[-1].doubleVal) / (yyvsp[0].intVal); }
+#line 1447 "simple-bison-code.c"
+    break;
+
+  case 44: /* exprEQUALS: LPAR EQUALS VARIABLE INTCONST RPAR  */
+#line 106 "simple-bison-code.y"
+                                           { }
+#line 1453 "simple-bison-code.c"
+    break;
+
+  case 45: /* exprEQUALS: LPAR EQUALS INTCONST VARIABLE RPAR  */
+#line 107 "simple-bison-code.y"
+                                             { }
+#line 1459 "simple-bison-code.c"
+    break;
+
+  case 46: /* exprEQUALS: LPAR EQUALS VARIABLE exprINT RPAR  */
+#line 108 "simple-bison-code.y"
+                                            { }
+#line 1465 "simple-bison-code.c"
+    break;
+
+  case 47: /* exprEQUALS: LPAR EQUALS exprINT VARIABLE RPAR  */
+#line 109 "simple-bison-code.y"
+                                            { }
+#line 1471 "simple-bison-code.c"
+    break;
+
+  case 48: /* exprEQUALS: LPAR EQUALS INTCONST exprINT RPAR  */
+#line 110 "simple-bison-code.y"
+                                            { }
+#line 1477 "simple-bison-code.c"
+    break;
+
+  case 49: /* exprEQUALS: LPAR EQUALS exprINT INTCONST RPAR  */
+#line 111 "simple-bison-code.y"
+                                            { }
+#line 1483 "simple-bison-code.c"
+    break;
+
+  case 50: /* exprBIND: BIND  */
+#line 115 "simple-bison-code.y"
+         { (yyval.strVal) = (yyvsp[0].strVal);  }
+#line 1489 "simple-bison-code.c"
+    break;
+
+  case 51: /* exprBIND: LPAR exprBIND VARIABLE INTCONST RPAR  */
+#line 116 "simple-bison-code.y"
+                                           { (yyval.strVal) = (yyvsp[-2].strVal); }
+#line 1495 "simple-bison-code.c"
+    break;
+
+  case 52: /* exprBIND: LPAR exprBIND VARIABLE LPAR exprINT RPAR RPAR  */
+#line 117 "simple-bison-code.y"
+                                                    { (yyval.strVal) = (yyvsp[-4].strVal); }
+#line 1501 "simple-bison-code.c"
+    break;
+
+  case 53: /* exprBIND: LPAR exprBIND VARIABLE LPAR exprDOUBLE RPAR RPAR  */
+#line 118 "simple-bison-code.y"
+                                                       { (yyval.strVal) = (yyvsp[-4].strVal); }
+#line 1507 "simple-bison-code.c"
+    break;
+
+  case 54: /* exprBIND: LPAR exprBIND VARIABLE LPAR READ RPAR RPAR  */
+#line 119 "simple-bison-code.y"
+                                                 { (yyval.strVal) = (yyvsp[-4].strVal); }
+#line 1513 "simple-bison-code.c"
+    break;
+
+  case 55: /* exprTEST: TEST  */
+#line 123 "simple-bison-code.y"
+         {  }
+#line 1519 "simple-bison-code.c"
+    break;
+
+  case 56: /* exprTEST: LPAR exprTEST LPAR exprEQUALS RPAR RPAR  */
+#line 124 "simple-bison-code.y"
+                                              { (yyval.intVal) = (yyvsp[-2].intVal);  }
+#line 1525 "simple-bison-code.c"
+    break;
+
+  case 57: /* exprTEST: LPAR exprTEST LPAR EQUALS VARIABLE INTCONST RPAR RPAR  */
+#line 125 "simple-bison-code.y"
+                                                            { }
+#line 1531 "simple-bison-code.c"
+    break;
+
+  case 58: /* exprTEST: LPAR exprTEST LPAR EQUALS INTCONST VARIABLE RPAR RPAR  */
+#line 126 "simple-bison-code.y"
+                                                            { }
+#line 1537 "simple-bison-code.c"
+    break;
+
+  case 59: /* exprTEST: LPAR exprTEST LPAR EQUALS DOUBLE VARIABLE RPAR RPAR  */
+#line 127 "simple-bison-code.y"
+                                                          { }
+#line 1543 "simple-bison-code.c"
+    break;
+
+  case 60: /* exprTEST: LPAR exprTEST LPAR EQUALS VARIABLE DOUBLE RPAR RPAR  */
+#line 128 "simple-bison-code.y"
+                                                          { }
+#line 1549 "simple-bison-code.c"
+    break;
+
+  case 61: /* exprTEST: LPAR exprTEST LPAR EQUALS VARIABLE VARIABLE RPAR RPAR  */
+#line 129 "simple-bison-code.y"
+                                                            { }
+#line 1555 "simple-bison-code.c"
+    break;
+
+  case 62: /* exprEVENTS: NAME  */
+#line 134 "simple-bison-code.y"
+         { }
+#line 1561 "simple-bison-code.c"
+    break;
+
+  case 63: /* exprEVENTS: INTCONST  */
+#line 135 "simple-bison-code.y"
+               { }
+#line 1567 "simple-bison-code.c"
+    break;
+
+  case 64: /* exprEVENTS: exprEVENT exprEVENTS  */
+#line 136 "simple-bison-code.y"
+                           { }
+#line 1573 "simple-bison-code.c"
+    break;
+
+  case 65: /* exprEVENT: LPAR exprEVENTS RPAR  */
+#line 140 "simple-bison-code.y"
+                         { }
+#line 1579 "simple-bison-code.c"
+    break;
+
+  case 66: /* exprDEFFACTS: DEFFACTS  */
+#line 144 "simple-bison-code.y"
+             { (yyval.strVal) = (yyvsp[0].strVal); }
+#line 1585 "simple-bison-code.c"
+    break;
+
+  case 67: /* exprDEFRULE: DEFRULE  */
+#line 148 "simple-bison-code.y"
+            { (yyval.strVal) = (yyvsp[0].strVal); }
+#line 1591 "simple-bison-code.c"
+    break;
+
+  case 68: /* exprPRINTOUT: PRINTOUT  */
+#line 152 "simple-bison-code.y"
+             { (yyval.strVal) = (yyvsp[0].strVal); }
+#line 1597 "simple-bison-code.c"
+    break;
+
+  case 69: /* expr: VARIABLE  */
+#line 156 "simple-bison-code.y"
+             { (yyval.strVal) = (yyvsp[0].strVal); }
+#line 1603 "simple-bison-code.c"
+    break;
+
+  case 70: /* expr: STRING  */
+#line 157 "simple-bison-code.y"
+             { (yyval.strVal) = (yyvsp[0].strVal); }
+#line 1609 "simple-bison-code.c"
+    break;
+
+  case 71: /* expr: COMMENT  */
+#line 158 "simple-bison-code.y"
+              { (yyval.strVal) = (yyvsp[0].strVal); }
+#line 1615 "simple-bison-code.c"
     break;
 
 
-#line 1153 "simple-bison-code.c"
+#line 1619 "simple-bison-code.c"
 
       default: break;
     }
@@ -1342,21 +1808,21 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 70 "simple-bison-code.y"
+#line 161 "simple-bison-code.y"
 
 
-/* H synarthsh yyerror xrhsimopoieitai gia thn anafora sfalmatwn. Sygkekrimena kaleitai
-   apo thn yyparse otan yparksei kapoio syntaktiko lathos. Sthn parakatw periptwsh h
-   synarthsh epi ths ousias typwnei mhnyma lathous sthn othonh. */
-void yyerror(char *s) {
-        fprintf(stderr, "Error: %s\n", s);
+void yyerror(const char *msg) {
+    fprintf(stderr, "Bison ERROR on line: %d with error message: %s\n", line, msg);
 }
 
-
-/* H synarthsh main pou apotelei kai to shmeio ekkinhshs tou programmatos.
-   Sthn sygkekrimenh periptwsh apla kalei thn synarthsh yyparse tou Bison
-   gia na ksekinhsei h syntaktikh analysh. */
+/* Όταν ξεκινήσει το πρόγραμμα καλεί απευθείας το yyparse() για να
+ξεκινήσει η ανάλυση */
 int main(void)  {
         yyparse();
+        printf("\n");
+        printf("Correct tokens = %d\n", countCorrectTokens); // WRONG
+        printf("Correct expressions = %d\n", countCorrectExpr);
+        printf("Wrong tokens = %d\n", countWrongTokens);
+        printf("Wrong expressions = %d\n", countWrongExpressions);
         return 0;
 }
