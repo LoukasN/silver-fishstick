@@ -71,13 +71,17 @@
 
     #include <stdio.h>
     #include <stdlib.h>
+    #include <string.h>
     int yylex();
+    /* Συνάρτηση για εμφάνιση συντακτικών λαθών*/
     void yyerror(const char *msg);
-    int countCorrectExpr = 0, countWrongExpressions = 0;
+    /* Μετρητές */
+    int countCorrectExpr = 0, countWrongExpr = 0, countFatalErrors = 0;
+    /* Συναρτήσεις που δηλώνονται σε άλλα αρχεία*/
     extern int line, countWrongTokens, countCorrectTokens;
     extern char* yytext;
 
-#line 81 "simple-bison-code.c"
+#line 85 "simple-bison-code.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -121,28 +125,31 @@ enum yysymbol_kind_t
   YYSYMBOL_DEFRULE = 13,                   /* DEFRULE  */
   YYSYMBOL_PRINTOUT = 14,                  /* PRINTOUT  */
   YYSYMBOL_PLUS = 15,                      /* PLUS  */
-  YYSYMBOL_DELIMITER = 16,                 /* DELIMITER  */
-  YYSYMBOL_NEWLINE = 17,                   /* NEWLINE  */
-  YYSYMBOL_MINUS = 18,                     /* MINUS  */
-  YYSYMBOL_MULT = 19,                      /* MULT  */
-  YYSYMBOL_DIV = 20,                       /* DIV  */
-  YYSYMBOL_EQUALS = 21,                    /* EQUALS  */
-  YYSYMBOL_LPAR = 22,                      /* LPAR  */
-  YYSYMBOL_RPAR = 23,                      /* RPAR  */
+  YYSYMBOL_MINUS = 16,                     /* MINUS  */
+  YYSYMBOL_MULT = 17,                      /* MULT  */
+  YYSYMBOL_DIV = 18,                       /* DIV  */
+  YYSYMBOL_EQUALS = 19,                    /* EQUALS  */
+  YYSYMBOL_LPAR = 20,                      /* LPAR  */
+  YYSYMBOL_RPAR = 21,                      /* RPAR  */
+  YYSYMBOL_DELIMITER = 22,                 /* DELIMITER  */
+  YYSYMBOL_NEWLINE = 23,                   /* NEWLINE  */
   YYSYMBOL_TOKEN_ERROR = 24,               /* TOKEN_ERROR  */
-  YYSYMBOL_YYACCEPT = 25,                  /* $accept  */
-  YYSYMBOL_program = 26,                   /* program  */
-  YYSYMBOL_exprINT = 27,                   /* exprINT  */
-  YYSYMBOL_exprDOUBLE = 28,                /* exprDOUBLE  */
-  YYSYMBOL_exprEQUALS = 29,                /* exprEQUALS  */
-  YYSYMBOL_exprBIND = 30,                  /* exprBIND  */
-  YYSYMBOL_exprTEST = 31,                  /* exprTEST  */
-  YYSYMBOL_exprEVENTS = 32,                /* exprEVENTS  */
-  YYSYMBOL_exprEVENT = 33,                 /* exprEVENT  */
-  YYSYMBOL_exprDEFFACTS = 34,              /* exprDEFFACTS  */
-  YYSYMBOL_exprDEFRULE = 35,               /* exprDEFRULE  */
-  YYSYMBOL_exprPRINTOUT = 36,              /* exprPRINTOUT  */
-  YYSYMBOL_expr = 37                       /* expr  */
+  YYSYMBOL_ARROW = 25,                     /* ARROW  */
+  YYSYMBOL_YYACCEPT = 26,                  /* $accept  */
+  YYSYMBOL_program = 27,                   /* program  */
+  YYSYMBOL_line = 28,                      /* line  */
+  YYSYMBOL_exprERRORCALC = 29,             /* exprERRORCALC  */
+  YYSYMBOL_exprERRORCOMP = 30,             /* exprERRORCOMP  */
+  YYSYMBOL_expr = 31,                      /* expr  */
+  YYSYMBOL_exprVALUE = 32,                 /* exprVALUE  */
+  YYSYMBOL_exprINT = 33,                   /* exprINT  */
+  YYSYMBOL_exprDOUBLE = 34,                /* exprDOUBLE  */
+  YYSYMBOL_exprCOMPARISON = 35,            /* exprCOMPARISON  */
+  YYSYMBOL_exprEVENTS = 36,                /* exprEVENTS  */
+  YYSYMBOL_exprEVENT = 37,                 /* exprEVENT  */
+  YYSYMBOL_exprGROUPS = 38,                /* exprGROUPS  */
+  YYSYMBOL_exprGROUP = 39,                 /* exprGROUP  */
+  YYSYMBOL_exprELEMENTS = 40               /* exprELEMENTS  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -470,19 +477,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  2
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   195
+#define YYLAST   251
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  25
+#define YYNTOKENS  26
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  13
+#define YYNNTS  15
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  71
+#define YYNRULES  74
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  170
+#define YYNSTATES  203
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   279
+#define YYMAXUTOK   280
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -523,21 +530,22 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20,    21,    22,    23,    24
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    56,    56,    57,    58,    59,    60,    61,    62,    63,
-      64,    65,    66,    67,    70,    71,    72,    73,    74,    75,
-      76,    77,    78,    79,    80,    81,    82,    83,    84,    85,
-      86,    90,    91,    92,    93,    94,    95,    96,    97,    98,
-      99,   100,   101,   102,   106,   107,   108,   109,   110,   111,
-     115,   116,   117,   118,   119,   123,   124,   125,   126,   127,
-     128,   129,   134,   135,   136,   140,   144,   148,   152,   156,
-     157,   158
+       0,    62,    62,    63,    67,    68,    69,    70,    71,    72,
+      73,    74,    75,    79,    80,    81,    82,    83,    84,    85,
+      86,    90,    91,    95,    96,    97,    98,    99,   100,   101,
+     102,   106,   107,   108,   109,   110,   111,   112,   116,   117,
+     118,   119,   120,   121,   125,   126,   127,   128,   129,   130,
+     131,   132,   133,   134,   135,   136,   137,   138,   142,   143,
+     144,   145,   146,   149,   150,   154,   157,   158,   162,   165,
+     166,   167,   168,   169,   170
 };
 #endif
 
@@ -555,11 +563,11 @@ static const char *const yytname[] =
 {
   "\"end of file\"", "error", "\"invalid token\"", "INTCONST", "DOUBLE",
   "VARIABLE", "STRING", "NAME", "COMMENT", "BIND", "TEST", "READ",
-  "DEFFACTS", "DEFRULE", "PRINTOUT", "PLUS", "DELIMITER", "NEWLINE",
-  "MINUS", "MULT", "DIV", "EQUALS", "LPAR", "RPAR", "TOKEN_ERROR",
-  "$accept", "program", "exprINT", "exprDOUBLE", "exprEQUALS", "exprBIND",
-  "exprTEST", "exprEVENTS", "exprEVENT", "exprDEFFACTS", "exprDEFRULE",
-  "exprPRINTOUT", "expr", YY_NULLPTR
+  "DEFFACTS", "DEFRULE", "PRINTOUT", "PLUS", "MINUS", "MULT", "DIV",
+  "EQUALS", "LPAR", "RPAR", "DELIMITER", "NEWLINE", "TOKEN_ERROR", "ARROW",
+  "$accept", "program", "line", "exprERRORCALC", "exprERRORCOMP", "expr",
+  "exprVALUE", "exprINT", "exprDOUBLE", "exprCOMPARISON", "exprEVENTS",
+  "exprEVENT", "exprGROUPS", "exprGROUP", "exprELEMENTS", YY_NULLPTR
 };
 
 static const char *
@@ -569,7 +577,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-17)
+#define YYPACT_NINF (-83)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -583,23 +591,27 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-     -17,    66,   -17,    -5,   -17,   -17,   -17,   -17,   -17,   -17,
-     -17,   -17,   -17,    42,    42,    42,    42,    84,    27,    28,
-      41,    56,    65,    72,    81,    93,    96,   124,   -17,    23,
-     103,    42,   103,    42,   103,    42,   103,    42,   -17,   -17,
-       4,    34,    60,    87,    14,     1,    54,    55,    91,    18,
-     -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,
-     -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,
-     -17,   -17,   106,   121,    80,   122,   125,   126,   130,   131,
-     134,     8,    25,   135,    26,   -16,   -17,    18,   -17,   119,
-     120,   123,   127,   128,   129,   132,   133,   136,   137,   138,
-     139,   140,   141,   142,   143,   144,   145,   146,   147,   148,
-     149,   150,   151,    97,    11,    99,   152,   -17,   -17,   -17,
-     -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,
-     -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,   -17,
-     -17,   153,   154,   155,   174,   175,    92,   158,   159,   160,
-     161,   162,   163,   164,   165,   166,   -17,   -17,   -17,   -17,
-     167,   168,   169,   170,   171,   -17,   -17,   -17,   -17,   -17
+     -83,    74,   -83,   -20,   -83,   -83,   -83,   -83,   -83,   156,
+     -83,   -83,   -83,   -83,    21,    22,    27,    32,    46,    26,
+     -83,    13,    13,    13,    13,    13,    65,    51,    66,    75,
+      73,    20,    20,    20,    20,    34,    13,   -83,   -83,   -83,
+     -83,   -83,    13,   -83,   -83,   -83,   -83,   -83,   -83,     9,
+      76,    70,    26,    26,    91,   -83,    72,    20,    20,    20,
+      20,    20,    20,    20,    20,     1,    48,    20,    93,   -83,
+     -83,   -83,   134,    96,   -83,   -83,   -83,    34,   -83,    97,
+      99,    13,   101,    91,    20,    20,    20,    20,   119,   120,
+     121,   122,   123,   125,   126,   133,   143,   146,   159,   160,
+     161,   162,   163,   164,   166,    83,   167,   172,   180,   181,
+     182,   183,   -83,   184,   -83,    23,    37,   -83,    82,   185,
+     186,   -83,    20,    20,    20,    20,    20,    20,    20,    20,
+     -83,   -83,   -83,   -83,   -83,   -83,   -83,   -83,   -83,   -83,
+     -83,   -83,   -83,   -83,   -83,   -83,   -83,    44,    44,    44,
+      44,   -83,   -83,   -83,   -83,   -83,   -83,   -83,   172,   -83,
+      92,    51,   -83,   -83,   187,   188,   189,   190,   191,   192,
+     193,   194,   -83,    44,    44,    44,    44,    20,    20,    20,
+      20,   195,   -83,   -83,   -83,   -83,   -83,   -83,   -83,   -83,
+      37,    37,    37,    37,    87,   197,   208,   203,    91,   204,
+     205,   206,   -83
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -607,37 +619,41 @@ static const yytype_int16 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-      13,     0,     1,     0,    31,    69,    70,    71,    50,    55,
-      66,    67,    68,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,    12,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,    63,    62,
+       2,     0,     1,     0,    38,    44,    23,    24,    25,    69,
+       4,     3,     5,     6,     0,     0,     0,     0,     0,    63,
+      12,    69,    69,    69,    69,    69,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,    69,     7,     8,     9,
+      10,    11,    69,    64,    71,    72,    74,    73,    70,     0,
+       0,     0,    63,     0,    66,    39,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    39,     0,     0,     0,    31,
+      32,    33,     0,     0,    35,    36,    37,     0,    27,     0,
+       0,    69,     0,    66,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       9,    10,    11,     3,     4,     5,     6,     7,     8,     2,
-      33,    34,    32,    36,    37,    35,    39,    40,    38,    42,
-      43,    41,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,    65,     0,    64,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,    14,    16,    15,
-      17,    18,    19,    21,    20,    22,    23,    25,    24,    26,
-      27,    29,    28,    30,    45,    48,    44,    46,    49,    47,
-      51,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,    56,    54,    52,    53,
-       0,     0,     0,     0,     0,    58,    59,    57,    60,    61
+       0,     0,    65,     0,    26,     0,     0,    28,     0,     0,
+       0,    67,     0,     0,     0,     0,     0,     0,     0,     0,
+      40,    13,    17,    46,    41,    14,    18,    47,    42,    15,
+      19,    48,    43,    16,    20,    49,    62,     0,     0,     0,
+       0,    60,    61,    58,    21,    22,    59,    34,     0,    45,
+       0,     0,    68,    30,     0,     0,     0,     0,     0,     0,
+       0,     0,    39,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,    50,    51,    52,    53,    54,    55,    56,    57,
+       0,     0,     0,     0,     0,     0,     0,     0,    66,     0,
+       0,     0,    29
 };
 
 /* YYPGOTO[NTERM-NUM].  */
-static const yytype_int16 yypgoto[] =
+static const yytype_int8 yypgoto[] =
 {
-     -17,   -17,   -13,    19,    59,   156,   157,    98,   194,   -17,
-     -17,   -17,   -17
+     -83,   -83,   -83,   -83,   -83,   -83,   -83,    71,    -1,   -22,
+     -17,   -83,   -82,   -83,   -14
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     1,    18,    19,    20,    46,    47,    48,    49,    24,
-      25,    26,    27
+       0,     1,    11,    12,    13,    14,    73,    88,    91,    17,
+      18,    19,    82,    83,    36
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -645,99 +661,115 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      30,    32,    34,    36,    38,   114,   115,    72,    39,    73,
-       8,     9,    28,   106,   144,   145,   146,    81,    61,    82,
-      64,    38,    67,    45,    70,    39,    29,    74,   108,   112,
-      29,    83,    31,    33,    35,    37,    29,    75,    40,    76,
-      87,    41,    42,    43,    50,    51,     4,    29,   113,    60,
-      62,    63,    65,    66,    68,    69,    71,    13,    52,    84,
-      14,    15,    16,    77,    29,    78,     2,     3,   107,   109,
-       4,     5,     6,    53,     7,     8,     9,    85,    10,    11,
-      12,    13,    54,    93,    14,    15,    16,    38,    17,    55,
-      79,    39,    80,     8,     9,   153,   154,   155,    56,    40,
-     142,     4,    41,    42,    43,    44,    45,     4,   141,    89,
-      57,    90,    13,    58,    86,    14,    15,    16,    13,    29,
-      44,    14,    15,    16,    91,    94,    92,    95,    96,    98,
-      97,    99,   143,   100,   102,   101,   103,   104,   110,   105,
-     111,    59,   117,   118,   116,     0,   119,    88,     0,     0,
-     120,   121,   122,     0,     0,   123,   124,    21,    22,   125,
-     126,   127,   128,   129,   130,   131,   132,   133,   134,   135,
-     136,   137,   138,   139,   140,   147,   148,   149,   150,   151,
-     152,   156,   157,   158,   159,   160,   161,   162,   163,   164,
-     165,   166,   167,   168,   169,    23
+      16,   121,    43,    20,     4,    51,   104,    44,    45,    46,
+      47,    48,    69,    70,    55,    71,    21,    22,    23,    24,
+      25,   105,    68,     4,     5,    55,     4,    76,   158,    72,
+      58,    60,    62,    64,    67,    79,    80,     4,     5,    65,
+      56,     5,   159,   105,    37,    38,    42,     4,    75,   172,
+      39,     4,     5,   107,    56,    40,    89,   160,    93,    95,
+      97,    99,   101,   103,   105,   109,   111,   119,    56,    41,
+      49,    50,    15,    52,     2,     3,   116,     4,     5,     6,
+       7,     8,    53,   123,   125,   127,   129,    84,    85,    86,
+      87,    78,   161,    54,     9,    77,     0,    10,   147,   148,
+     149,   150,    57,    59,    61,    63,    66,   177,   178,   179,
+     180,    81,   195,     0,   112,   111,   199,   114,   117,   118,
+      74,   164,   120,   166,    95,   168,    99,   170,   103,    90,
+      92,    94,    96,    98,   100,   102,   106,   108,   110,   181,
+     130,   131,   132,   133,   134,   113,   135,   136,   115,    84,
+      85,    86,    87,    77,   137,   122,   124,   126,   128,    21,
+      22,    23,    24,    25,   138,    26,    27,   139,    28,    29,
+      30,    31,    32,    33,    34,    35,   123,   125,   127,   129,
+     140,   141,   142,   143,   144,   145,   108,   146,   151,   164,
+     166,   168,   170,   152,   165,    92,   167,    96,   169,   100,
+     171,   153,   154,   155,   156,   157,   162,   163,   182,   183,
+     184,   185,   186,   187,   188,   189,   194,   196,   173,   174,
+     175,   176,   197,   198,     0,   200,   201,   202,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    92,    96,   100,   190,   191,
+     192,   193
 };
 
-static const yytype_int8 yycheck[] =
+static const yytype_int16 yycheck[] =
 {
-      13,    14,    15,    16,     3,    21,    22,     3,     7,     5,
-       9,    10,    17,     5,     3,     4,     5,     3,    31,     5,
-      33,     3,    35,    22,    37,     7,    22,    40,     3,     3,
-      22,    44,    13,    14,    15,    16,    22,     3,    15,     5,
-      22,    18,    19,    20,    17,    17,     4,    22,    22,    30,
-      31,    32,    33,    34,    35,    36,    37,    15,    17,     5,
-      18,    19,    20,     3,    22,     5,     0,     1,    81,    82,
-       4,     5,     6,    17,     8,     9,    10,    22,    12,    13,
-      14,    15,    17,     3,    18,    19,    20,     3,    22,    17,
-       3,     7,     5,     9,    10,     3,     4,     5,    17,    15,
-     113,     4,    18,    19,    20,    21,    22,     4,    11,     3,
-      17,     5,    15,    17,    23,    18,    19,    20,    15,    22,
-      21,    18,    19,    20,     3,     3,     5,     5,     3,     3,
-       5,     5,   113,     3,     3,     5,     5,     3,     3,     5,
-       5,    17,    23,    23,    85,    -1,    23,    49,    -1,    -1,
-      23,    23,    23,    -1,    -1,    23,    23,     1,     1,    23,
-      23,    23,    23,    23,    23,    23,    23,    23,    23,    23,
-      23,    23,    23,    23,    23,    23,    23,    23,    23,     5,
-       5,    23,    23,    23,    23,    23,    23,    23,    23,    23,
-      23,    23,    23,    23,    23,     1
+       1,    83,    19,    23,     3,    27,     5,    21,    22,    23,
+      24,    25,     3,     4,     5,     6,     3,     4,     5,     6,
+       7,    20,    36,     3,     4,     5,     3,    49,     5,    20,
+      31,    32,    33,    34,    35,    52,    53,     3,     4,     5,
+      20,     4,     5,    20,    23,    23,    20,     3,    49,     5,
+      23,     3,     4,     5,    20,    23,    57,    20,    59,    60,
+      61,    62,    63,    64,    20,    66,    67,    81,    20,    23,
+       5,    20,     1,     7,     0,     1,    77,     3,     4,     5,
+       6,     7,     7,    84,    85,    86,    87,    15,    16,    17,
+      18,    21,    10,    20,    20,    19,    -1,    23,    15,    16,
+      17,    18,    31,    32,    33,    34,    35,    15,    16,    17,
+      18,    20,    25,    -1,    21,   116,   198,    21,    21,    20,
+      49,   122,    21,   124,   125,   126,   127,   128,   129,    58,
+      59,    60,    61,    62,    63,    64,    65,    66,    67,   161,
+      21,    21,    21,    21,    21,    11,    21,    21,    77,    15,
+      16,    17,    18,    19,    21,    84,    85,    86,    87,     3,
+       4,     5,     6,     7,    21,     9,    10,    21,    12,    13,
+      14,    15,    16,    17,    18,    19,   177,   178,   179,   180,
+      21,    21,    21,    21,    21,    21,   115,    21,    21,   190,
+     191,   192,   193,    21,   123,   124,   125,   126,   127,   128,
+     129,    21,    21,    21,    21,    21,    21,    21,    21,    21,
+      21,    21,    21,    21,    21,    21,    21,    20,   147,   148,
+     149,   150,    14,    20,    -1,    21,    21,    21,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,   174,   175,   176,   177,   178,
+     179,   180
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    26,     0,     1,     4,     5,     6,     8,     9,    10,
-      12,    13,    14,    15,    18,    19,    20,    22,    27,    28,
-      29,    30,    31,    33,    34,    35,    36,    37,    17,    22,
-      27,    28,    27,    28,    27,    28,    27,    28,     3,     7,
-      15,    18,    19,    20,    21,    22,    30,    31,    32,    33,
-      17,    17,    17,    17,    17,    17,    17,    17,    17,    17,
-      28,    27,    28,    28,    27,    28,    28,    27,    28,    28,
-      27,    28,     3,     5,    27,     3,     5,     3,     5,     3,
-       5,     3,     5,    27,     5,    22,    23,    22,    32,     3,
-       5,     3,     5,     3,     3,     5,     3,     5,     3,     5,
-       3,     5,     3,     5,     3,     5,     5,    27,     3,    27,
-       3,     5,     3,    22,    21,    22,    29,    23,    23,    23,
-      23,    23,    23,    23,    23,    23,    23,    23,    23,    23,
-      23,    23,    23,    23,    23,    23,    23,    23,    23,    23,
-      23,    11,    27,    28,     3,     4,     5,    23,    23,    23,
-      23,     5,     5,     3,     4,     5,    23,    23,    23,    23,
-      23,    23,    23,    23,    23,    23,    23,    23,    23,    23
+       0,    27,     0,     1,     3,     4,     5,     6,     7,    20,
+      23,    28,    29,    30,    31,    33,    34,    35,    36,    37,
+      23,     3,     4,     5,     6,     7,     9,    10,    12,    13,
+      14,    15,    16,    17,    18,    19,    40,    23,    23,    23,
+      23,    23,    20,    36,    40,    40,    40,    40,    40,     5,
+      20,    35,     7,     7,    20,     5,    20,    33,    34,    33,
+      34,    33,    34,    33,    34,     5,    33,    34,    40,     3,
+       4,     6,    20,    32,    33,    34,    35,    19,    21,    36,
+      36,    20,    38,    39,    15,    16,    17,    18,    33,    34,
+      33,    34,    33,    34,    33,    34,    33,    34,    33,    34,
+      33,    34,    33,    34,     5,    20,    33,     5,    33,    34,
+      33,    34,    21,    11,    21,    33,    34,    21,    20,    40,
+      21,    38,    33,    34,    33,    34,    33,    34,    33,    34,
+      21,    21,    21,    21,    21,    21,    21,    21,    21,    21,
+      21,    21,    21,    21,    21,    21,    21,    15,    16,    17,
+      18,    21,    21,    21,    21,    21,    21,    21,     5,     5,
+      20,    10,    21,    21,    34,    33,    34,    33,    34,    33,
+      34,    33,     5,    33,    33,    33,    33,    15,    16,    17,
+      18,    35,    21,    21,    21,    21,    21,    21,    21,    21,
+      33,    33,    33,    33,    21,    25,    20,    14,    20,    38,
+      21,    21,    21
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    25,    26,    26,    26,    26,    26,    26,    26,    26,
-      26,    26,    26,    26,    27,    27,    27,    27,    27,    27,
-      27,    27,    27,    27,    27,    27,    27,    27,    27,    27,
-      27,    28,    28,    28,    28,    28,    28,    28,    28,    28,
-      28,    28,    28,    28,    29,    29,    29,    29,    29,    29,
-      30,    30,    30,    30,    30,    31,    31,    31,    31,    31,
-      31,    31,    32,    32,    32,    33,    34,    35,    36,    37,
-      37,    37
+       0,    26,    27,    27,    28,    28,    28,    28,    28,    28,
+      28,    28,    28,    29,    29,    29,    29,    29,    29,    29,
+      29,    30,    30,    31,    31,    31,    31,    31,    31,    31,
+      31,    32,    32,    32,    32,    32,    32,    32,    33,    33,
+      33,    33,    33,    33,    34,    34,    34,    34,    34,    34,
+      34,    34,    34,    34,    34,    34,    34,    34,    35,    35,
+      35,    35,    35,    36,    36,    37,    38,    38,    39,    40,
+      40,    40,    40,    40,    40
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     3,     3,     3,     3,     3,     3,     3,     3,
-       3,     3,     3,     0,     5,     5,     5,     5,     5,     5,
+       0,     2,     0,     2,     1,     1,     1,     2,     2,     2,
+       2,     2,     2,     5,     5,     5,     5,     5,     5,     5,
+       5,     5,     5,     1,     1,     1,     5,     4,     5,    16,
+       6,     1,     1,     1,     3,     1,     1,     1,     1,     1,
+       5,     5,     5,     5,     1,     1,     5,     5,     5,     5,
        5,     5,     5,     5,     5,     5,     5,     5,     5,     5,
-       5,     1,     3,     3,     3,     3,     3,     3,     3,     3,
-       3,     3,     3,     3,     5,     5,     5,     5,     5,     5,
-       1,     5,     7,     7,     7,     1,     6,     8,     8,     8,
-       8,     8,     1,     1,     2,     3,     1,     1,     1,     1,
-       1,     1
+       5,     5,     5,     0,     2,     4,     0,     2,     3,     0,
+       2,     2,     2,     2,     2
 };
 
 
@@ -1200,422 +1232,362 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 2: /* program: program expr NEWLINE  */
-#line 56 "simple-bison-code.y"
-                             { printf("expr %s\n", (yyvsp[-1].strVal)); countCorrectExpr++; }
-#line 1207 "simple-bison-code.c"
+  case 4: /* line: NEWLINE  */
+#line 67 "simple-bison-code.y"
+                { }
+#line 1239 "simple-bison-code.c"
     break;
 
-  case 3: /* program: program exprBIND NEWLINE  */
-#line 57 "simple-bison-code.y"
-                                   { countCorrectExpr++; }
-#line 1213 "simple-bison-code.c"
+  case 5: /* line: exprERRORCALC  */
+#line 68 "simple-bison-code.y"
+                        { countWrongExpr++; }
+#line 1245 "simple-bison-code.c"
     break;
 
-  case 4: /* program: program exprTEST NEWLINE  */
-#line 58 "simple-bison-code.y"
-                                   { countCorrectExpr++; }
-#line 1219 "simple-bison-code.c"
+  case 6: /* line: exprERRORCOMP  */
+#line 69 "simple-bison-code.y"
+                        { countWrongExpr++; }
+#line 1251 "simple-bison-code.c"
     break;
 
-  case 5: /* program: program exprEVENT NEWLINE  */
-#line 59 "simple-bison-code.y"
-                                    { printf("%s\n", (yyvsp[-1].strVal)); countCorrectExpr++; }
-#line 1225 "simple-bison-code.c"
-    break;
-
-  case 6: /* program: program exprDEFFACTS NEWLINE  */
-#line 60 "simple-bison-code.y"
-                                       { printf("%s\n", (yyvsp[-1].strVal)); countCorrectExpr++; }
-#line 1231 "simple-bison-code.c"
-    break;
-
-  case 7: /* program: program exprDEFRULE NEWLINE  */
-#line 61 "simple-bison-code.y"
-                                      { printf("%s\n", (yyvsp[-1].strVal)); countCorrectExpr++; }
-#line 1237 "simple-bison-code.c"
-    break;
-
-  case 8: /* program: program exprPRINTOUT NEWLINE  */
-#line 62 "simple-bison-code.y"
-                                       { printf("%s\n", (yyvsp[-1].strVal)); countCorrectExpr++; }
-#line 1243 "simple-bison-code.c"
-    break;
-
-  case 9: /* program: program exprINT NEWLINE  */
-#line 63 "simple-bison-code.y"
-                                  { printf("%d\n", (yyvsp[-1].intVal)); countCorrectExpr++; }
-#line 1249 "simple-bison-code.c"
-    break;
-
-  case 10: /* program: program exprDOUBLE NEWLINE  */
-#line 64 "simple-bison-code.y"
-                                     { countCorrectExpr++; }
-#line 1255 "simple-bison-code.c"
-    break;
-
-  case 11: /* program: program exprEQUALS NEWLINE  */
-#line 65 "simple-bison-code.y"
-                                     { countCorrectExpr++; }
-#line 1261 "simple-bison-code.c"
-    break;
-
-  case 12: /* program: program error NEWLINE  */
-#line 66 "simple-bison-code.y"
-                                { countWrongExpressions++; }
-#line 1267 "simple-bison-code.c"
-    break;
-
-  case 14: /* exprINT: LPAR PLUS INTCONST INTCONST RPAR  */
+  case 7: /* line: expr NEWLINE  */
 #line 70 "simple-bison-code.y"
-                                         { }
-#line 1273 "simple-bison-code.c"
+                       { countCorrectExpr++; }
+#line 1257 "simple-bison-code.c"
     break;
 
-  case 15: /* exprINT: LPAR PLUS VARIABLE INTCONST RPAR  */
+  case 8: /* line: exprINT NEWLINE  */
 #line 71 "simple-bison-code.y"
-                                           { }
-#line 1279 "simple-bison-code.c"
+                          { countCorrectExpr++; }
+#line 1263 "simple-bison-code.c"
     break;
 
-  case 16: /* exprINT: LPAR PLUS INTCONST VARIABLE RPAR  */
+  case 9: /* line: exprDOUBLE NEWLINE  */
 #line 72 "simple-bison-code.y"
-                                           { }
-#line 1285 "simple-bison-code.c"
+                             { countCorrectExpr++; }
+#line 1269 "simple-bison-code.c"
     break;
 
-  case 17: /* exprINT: LPAR PLUS VARIABLE VARIABLE RPAR  */
+  case 10: /* line: exprCOMPARISON NEWLINE  */
 #line 73 "simple-bison-code.y"
-                                           { }
-#line 1291 "simple-bison-code.c"
+                                 { countCorrectExpr++; }
+#line 1275 "simple-bison-code.c"
     break;
 
-  case 18: /* exprINT: LPAR PLUS exprINT INTCONST RPAR  */
+  case 11: /* line: exprEVENTS NEWLINE  */
 #line 74 "simple-bison-code.y"
-                                          { (yyval.intVal) = (yyvsp[-2].intVal) + (yyvsp[-1].intVal); }
-#line 1297 "simple-bison-code.c"
+                             { countCorrectExpr++; }
+#line 1281 "simple-bison-code.c"
     break;
 
-  case 19: /* exprINT: LPAR MINUS INTCONST INTCONST RPAR  */
+  case 12: /* line: error NEWLINE  */
 #line 75 "simple-bison-code.y"
-                                             { (yyval.intVal) = (yyvsp[-2].intVal) - (yyvsp[-1].intVal); }
-#line 1303 "simple-bison-code.c"
+                        {  countWrongExpr++; yyerrok; }
+#line 1287 "simple-bison-code.c"
     break;
 
-  case 20: /* exprINT: LPAR MINUS VARIABLE INTCONST RPAR  */
-#line 76 "simple-bison-code.y"
-                                            { }
-#line 1309 "simple-bison-code.c"
-    break;
-
-  case 21: /* exprINT: LPAR MINUS INTCONST VARIABLE RPAR  */
-#line 77 "simple-bison-code.y"
-                                            { }
-#line 1315 "simple-bison-code.c"
-    break;
-
-  case 22: /* exprINT: LPAR MINUS VARIABLE VARIABLE RPAR  */
-#line 78 "simple-bison-code.y"
-                                            { }
-#line 1321 "simple-bison-code.c"
-    break;
-
-  case 23: /* exprINT: LPAR MULT INTCONST INTCONST RPAR  */
+  case 13: /* exprERRORCALC: LPAR PLUS exprINT exprDOUBLE RPAR  */
 #line 79 "simple-bison-code.y"
-                                          { (yyval.intVal) = (yyvsp[-2].intVal) * (yyvsp[-1].intVal); }
-#line 1327 "simple-bison-code.c"
+                                          { printf("WARNING: Cannot add integer with double on line %d\n", line); }
+#line 1293 "simple-bison-code.c"
     break;
 
-  case 24: /* exprINT: LPAR MULT VARIABLE INTCONST RPAR  */
+  case 14: /* exprERRORCALC: LPAR MINUS exprINT exprDOUBLE RPAR  */
 #line 80 "simple-bison-code.y"
-                                          { }
-#line 1333 "simple-bison-code.c"
+                                             { printf("WARNING: Cannot subtract integer with double on line %d\n", line); }
+#line 1299 "simple-bison-code.c"
     break;
 
-  case 25: /* exprINT: LPAR MULT INTCONST VARIABLE RPAR  */
+  case 15: /* exprERRORCALC: LPAR MULT exprINT exprDOUBLE RPAR  */
 #line 81 "simple-bison-code.y"
-                                          { }
-#line 1339 "simple-bison-code.c"
+                                            { printf("WARNING: Cannot multiply integer with double on line %d\n", line); }
+#line 1305 "simple-bison-code.c"
     break;
 
-  case 26: /* exprINT: LPAR MULT VARIABLE VARIABLE RPAR  */
+  case 16: /* exprERRORCALC: LPAR DIV exprINT exprDOUBLE RPAR  */
 #line 82 "simple-bison-code.y"
-                                           { }
-#line 1345 "simple-bison-code.c"
+                                           { printf("WARNING: Cannot divide integer with double on line %d\n", line); }
+#line 1311 "simple-bison-code.c"
     break;
 
-  case 27: /* exprINT: LPAR DIV INTCONST INTCONST RPAR  */
+  case 17: /* exprERRORCALC: LPAR PLUS exprDOUBLE exprINT RPAR  */
 #line 83 "simple-bison-code.y"
-                                          { (yyval.intVal) = (yyvsp[-2].intVal) / (yyvsp[-1].intVal); }
-#line 1351 "simple-bison-code.c"
+                                            { printf("WARNING: Cannot add double with integer on line %d\n", line); }
+#line 1317 "simple-bison-code.c"
     break;
 
-  case 28: /* exprINT: LPAR DIV VARIABLE INTCONST RPAR  */
+  case 18: /* exprERRORCALC: LPAR MINUS exprDOUBLE exprINT RPAR  */
 #line 84 "simple-bison-code.y"
-                                         { }
-#line 1357 "simple-bison-code.c"
+                                             { printf("WARNING: Cannot subtract double with integer on line %d\n", line); }
+#line 1323 "simple-bison-code.c"
     break;
 
-  case 29: /* exprINT: LPAR DIV INTCONST VARIABLE RPAR  */
+  case 19: /* exprERRORCALC: LPAR MULT exprDOUBLE exprINT RPAR  */
 #line 85 "simple-bison-code.y"
-                                         { }
-#line 1363 "simple-bison-code.c"
+                                            { printf("WARNING: Cannot multiply double with integer on line %d\n", line); }
+#line 1329 "simple-bison-code.c"
     break;
 
-  case 30: /* exprINT: LPAR DIV VARIABLE VARIABLE RPAR  */
+  case 20: /* exprERRORCALC: LPAR DIV exprDOUBLE exprINT RPAR  */
 #line 86 "simple-bison-code.y"
-                                          { }
-#line 1369 "simple-bison-code.c"
+                                           { printf("WARNING: Cannot divide double with integer on line %d\n", line); }
+#line 1335 "simple-bison-code.c"
     break;
 
-  case 31: /* exprDOUBLE: DOUBLE  */
+  case 21: /* exprERRORCOMP: LPAR EQUALS exprINT exprDOUBLE RPAR  */
 #line 90 "simple-bison-code.y"
-               { (yyval.doubleVal) = (yyvsp[0].doubleVal); }
-#line 1375 "simple-bison-code.c"
+                                            { printf("WARNING: Cannot compare integer with double on line %d\n", line); }
+#line 1341 "simple-bison-code.c"
     break;
 
-  case 32: /* exprDOUBLE: PLUS exprDOUBLE exprDOUBLE  */
+  case 22: /* exprERRORCOMP: LPAR EQUALS exprDOUBLE exprINT RPAR  */
 #line 91 "simple-bison-code.y"
-                                     { (yyval.doubleVal) = (yyvsp[-1].doubleVal) + (yyvsp[0].doubleVal); }
-#line 1381 "simple-bison-code.c"
+                                              { printf("WARNING: Cannot compare double with integer on line %d\n", line); }
+#line 1347 "simple-bison-code.c"
     break;
 
-  case 33: /* exprDOUBLE: PLUS exprINT exprDOUBLE  */
-#line 92 "simple-bison-code.y"
-                                  { (yyval.doubleVal) = (yyvsp[-1].intVal) + (yyvsp[0].doubleVal); }
-#line 1387 "simple-bison-code.c"
-    break;
-
-  case 34: /* exprDOUBLE: PLUS exprDOUBLE exprINT  */
-#line 93 "simple-bison-code.y"
-                                  { (yyval.doubleVal) = (yyvsp[-1].doubleVal) + (yyvsp[0].intVal); }
-#line 1393 "simple-bison-code.c"
-    break;
-
-  case 35: /* exprDOUBLE: MINUS exprDOUBLE exprDOUBLE  */
-#line 94 "simple-bison-code.y"
-                                        { (yyval.doubleVal) = (yyvsp[-1].doubleVal) - (yyvsp[0].doubleVal); }
-#line 1399 "simple-bison-code.c"
-    break;
-
-  case 36: /* exprDOUBLE: MINUS exprINT exprDOUBLE  */
+  case 23: /* expr: VARIABLE  */
 #line 95 "simple-bison-code.y"
-                                     { (yyval.doubleVal) = (yyvsp[-1].intVal) - (yyvsp[0].doubleVal); }
-#line 1405 "simple-bison-code.c"
+                 { }
+#line 1353 "simple-bison-code.c"
     break;
 
-  case 37: /* exprDOUBLE: MINUS exprDOUBLE exprINT  */
+  case 24: /* expr: STRING  */
 #line 96 "simple-bison-code.y"
-                                     { (yyval.doubleVal) = (yyvsp[-1].doubleVal) - (yyvsp[0].intVal); }
-#line 1411 "simple-bison-code.c"
+                 { }
+#line 1359 "simple-bison-code.c"
     break;
 
-  case 38: /* exprDOUBLE: MULT exprDOUBLE exprDOUBLE  */
+  case 25: /* expr: NAME  */
 #line 97 "simple-bison-code.y"
-                                       { (yyval.doubleVal) = (yyvsp[-1].doubleVal) * (yyvsp[0].doubleVal); }
-#line 1417 "simple-bison-code.c"
-    break;
-
-  case 39: /* exprDOUBLE: MULT exprINT exprDOUBLE  */
-#line 98 "simple-bison-code.y"
-                                    { (yyval.doubleVal) = (yyvsp[-1].intVal) * (yyvsp[0].doubleVal); }
-#line 1423 "simple-bison-code.c"
-    break;
-
-  case 40: /* exprDOUBLE: MULT exprDOUBLE exprINT  */
-#line 99 "simple-bison-code.y"
-                                    { (yyval.doubleVal) = (yyvsp[-1].doubleVal) * (yyvsp[0].intVal); }
-#line 1429 "simple-bison-code.c"
-    break;
-
-  case 41: /* exprDOUBLE: DIV exprDOUBLE exprDOUBLE  */
-#line 100 "simple-bison-code.y"
-                                      { (yyval.doubleVal) = (yyvsp[-1].doubleVal) / (yyvsp[0].doubleVal); }
-#line 1435 "simple-bison-code.c"
-    break;
-
-  case 42: /* exprDOUBLE: DIV exprINT exprDOUBLE  */
-#line 101 "simple-bison-code.y"
-                                   { (yyval.doubleVal) = (yyvsp[-1].intVal) / (yyvsp[0].doubleVal); }
-#line 1441 "simple-bison-code.c"
-    break;
-
-  case 43: /* exprDOUBLE: DIV exprDOUBLE exprINT  */
-#line 102 "simple-bison-code.y"
-                                   { (yyval.doubleVal) = (yyvsp[-1].doubleVal) / (yyvsp[0].intVal); }
-#line 1447 "simple-bison-code.c"
-    break;
-
-  case 44: /* exprEQUALS: LPAR EQUALS VARIABLE INTCONST RPAR  */
-#line 106 "simple-bison-code.y"
-                                           { }
-#line 1453 "simple-bison-code.c"
-    break;
-
-  case 45: /* exprEQUALS: LPAR EQUALS INTCONST VARIABLE RPAR  */
-#line 107 "simple-bison-code.y"
-                                             { }
-#line 1459 "simple-bison-code.c"
-    break;
-
-  case 46: /* exprEQUALS: LPAR EQUALS VARIABLE exprINT RPAR  */
-#line 108 "simple-bison-code.y"
-                                            { }
-#line 1465 "simple-bison-code.c"
-    break;
-
-  case 47: /* exprEQUALS: LPAR EQUALS exprINT VARIABLE RPAR  */
-#line 109 "simple-bison-code.y"
-                                            { }
-#line 1471 "simple-bison-code.c"
-    break;
-
-  case 48: /* exprEQUALS: LPAR EQUALS INTCONST exprINT RPAR  */
-#line 110 "simple-bison-code.y"
-                                            { }
-#line 1477 "simple-bison-code.c"
-    break;
-
-  case 49: /* exprEQUALS: LPAR EQUALS exprINT INTCONST RPAR  */
-#line 111 "simple-bison-code.y"
-                                            { }
-#line 1483 "simple-bison-code.c"
-    break;
-
-  case 50: /* exprBIND: BIND  */
-#line 115 "simple-bison-code.y"
-         { (yyval.strVal) = (yyvsp[0].strVal);  }
-#line 1489 "simple-bison-code.c"
-    break;
-
-  case 51: /* exprBIND: LPAR exprBIND VARIABLE INTCONST RPAR  */
-#line 116 "simple-bison-code.y"
-                                           { (yyval.strVal) = (yyvsp[-2].strVal); }
-#line 1495 "simple-bison-code.c"
-    break;
-
-  case 52: /* exprBIND: LPAR exprBIND VARIABLE LPAR exprINT RPAR RPAR  */
-#line 117 "simple-bison-code.y"
-                                                    { (yyval.strVal) = (yyvsp[-4].strVal); }
-#line 1501 "simple-bison-code.c"
-    break;
-
-  case 53: /* exprBIND: LPAR exprBIND VARIABLE LPAR exprDOUBLE RPAR RPAR  */
-#line 118 "simple-bison-code.y"
-                                                       { (yyval.strVal) = (yyvsp[-4].strVal); }
-#line 1507 "simple-bison-code.c"
-    break;
-
-  case 54: /* exprBIND: LPAR exprBIND VARIABLE LPAR READ RPAR RPAR  */
-#line 119 "simple-bison-code.y"
-                                                 { (yyval.strVal) = (yyvsp[-4].strVal); }
-#line 1513 "simple-bison-code.c"
-    break;
-
-  case 55: /* exprTEST: TEST  */
-#line 123 "simple-bison-code.y"
-         {  }
-#line 1519 "simple-bison-code.c"
-    break;
-
-  case 56: /* exprTEST: LPAR exprTEST LPAR exprEQUALS RPAR RPAR  */
-#line 124 "simple-bison-code.y"
-                                              { (yyval.intVal) = (yyvsp[-2].intVal);  }
-#line 1525 "simple-bison-code.c"
-    break;
-
-  case 57: /* exprTEST: LPAR exprTEST LPAR EQUALS VARIABLE INTCONST RPAR RPAR  */
-#line 125 "simple-bison-code.y"
-                                                            { }
-#line 1531 "simple-bison-code.c"
-    break;
-
-  case 58: /* exprTEST: LPAR exprTEST LPAR EQUALS INTCONST VARIABLE RPAR RPAR  */
-#line 126 "simple-bison-code.y"
-                                                            { }
-#line 1537 "simple-bison-code.c"
-    break;
-
-  case 59: /* exprTEST: LPAR exprTEST LPAR EQUALS DOUBLE VARIABLE RPAR RPAR  */
-#line 127 "simple-bison-code.y"
-                                                          { }
-#line 1543 "simple-bison-code.c"
-    break;
-
-  case 60: /* exprTEST: LPAR exprTEST LPAR EQUALS VARIABLE DOUBLE RPAR RPAR  */
-#line 128 "simple-bison-code.y"
-                                                          { }
-#line 1549 "simple-bison-code.c"
-    break;
-
-  case 61: /* exprTEST: LPAR exprTEST LPAR EQUALS VARIABLE VARIABLE RPAR RPAR  */
-#line 129 "simple-bison-code.y"
-                                                            { }
-#line 1555 "simple-bison-code.c"
-    break;
-
-  case 62: /* exprEVENTS: NAME  */
-#line 134 "simple-bison-code.y"
-         { }
-#line 1561 "simple-bison-code.c"
-    break;
-
-  case 63: /* exprEVENTS: INTCONST  */
-#line 135 "simple-bison-code.y"
                { }
-#line 1567 "simple-bison-code.c"
+#line 1365 "simple-bison-code.c"
     break;
 
-  case 64: /* exprEVENTS: exprEVENT exprEVENTS  */
-#line 136 "simple-bison-code.y"
-                           { }
-#line 1573 "simple-bison-code.c"
+  case 26: /* expr: LPAR BIND VARIABLE exprVALUE RPAR  */
+#line 98 "simple-bison-code.y"
+                                            { }
+#line 1371 "simple-bison-code.c"
     break;
 
-  case 65: /* exprEVENT: LPAR exprEVENTS RPAR  */
-#line 140 "simple-bison-code.y"
+  case 27: /* expr: LPAR TEST exprCOMPARISON RPAR  */
+#line 99 "simple-bison-code.y"
+                                        { }
+#line 1377 "simple-bison-code.c"
+    break;
+
+  case 28: /* expr: LPAR DEFFACTS NAME exprEVENTS RPAR  */
+#line 100 "simple-bison-code.y"
+                                             { }
+#line 1383 "simple-bison-code.c"
+    break;
+
+  case 29: /* expr: LPAR DEFRULE NAME exprEVENTS LPAR TEST exprCOMPARISON RPAR ARROW LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR RPAR  */
+#line 101 "simple-bison-code.y"
+                                                                                                                        { }
+#line 1389 "simple-bison-code.c"
+    break;
+
+  case 30: /* expr: LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR  */
+#line 102 "simple-bison-code.y"
+                                                  { }
+#line 1395 "simple-bison-code.c"
+    break;
+
+  case 31: /* exprVALUE: INTCONST  */
+#line 106 "simple-bison-code.y"
+                 { }
+#line 1401 "simple-bison-code.c"
+    break;
+
+  case 32: /* exprVALUE: DOUBLE  */
+#line 107 "simple-bison-code.y"
+                 { }
+#line 1407 "simple-bison-code.c"
+    break;
+
+  case 33: /* exprVALUE: STRING  */
+#line 108 "simple-bison-code.y"
+                 { }
+#line 1413 "simple-bison-code.c"
+    break;
+
+  case 34: /* exprVALUE: LPAR READ RPAR  */
+#line 109 "simple-bison-code.y"
                          { }
-#line 1579 "simple-bison-code.c"
+#line 1419 "simple-bison-code.c"
     break;
 
-  case 66: /* exprDEFFACTS: DEFFACTS  */
+  case 35: /* exprVALUE: exprINT  */
+#line 110 "simple-bison-code.y"
+                  { }
+#line 1425 "simple-bison-code.c"
+    break;
+
+  case 36: /* exprVALUE: exprDOUBLE  */
+#line 111 "simple-bison-code.y"
+                     { }
+#line 1431 "simple-bison-code.c"
+    break;
+
+  case 37: /* exprVALUE: exprCOMPARISON  */
+#line 112 "simple-bison-code.y"
+                         { }
+#line 1437 "simple-bison-code.c"
+    break;
+
+  case 38: /* exprINT: INTCONST  */
+#line 116 "simple-bison-code.y"
+                 {  }
+#line 1443 "simple-bison-code.c"
+    break;
+
+  case 39: /* exprINT: VARIABLE  */
+#line 117 "simple-bison-code.y"
+                   { }
+#line 1449 "simple-bison-code.c"
+    break;
+
+  case 40: /* exprINT: LPAR PLUS exprINT exprINT RPAR  */
+#line 118 "simple-bison-code.y"
+                                         { }
+#line 1455 "simple-bison-code.c"
+    break;
+
+  case 41: /* exprINT: LPAR MINUS exprINT exprINT RPAR  */
+#line 119 "simple-bison-code.y"
+                                          { }
+#line 1461 "simple-bison-code.c"
+    break;
+
+  case 42: /* exprINT: LPAR MULT exprINT exprINT RPAR  */
+#line 120 "simple-bison-code.y"
+                                         { }
+#line 1467 "simple-bison-code.c"
+    break;
+
+  case 43: /* exprINT: LPAR DIV exprINT exprINT RPAR  */
+#line 121 "simple-bison-code.y"
+                                        { }
+#line 1473 "simple-bison-code.c"
+    break;
+
+  case 44: /* exprDOUBLE: DOUBLE  */
+#line 125 "simple-bison-code.y"
+               {  }
+#line 1479 "simple-bison-code.c"
+    break;
+
+  case 45: /* exprDOUBLE: VARIABLE  */
+#line 126 "simple-bison-code.y"
+                   { }
+#line 1485 "simple-bison-code.c"
+    break;
+
+  case 46: /* exprDOUBLE: LPAR PLUS exprDOUBLE exprDOUBLE RPAR  */
+#line 127 "simple-bison-code.y"
+                                               { }
+#line 1491 "simple-bison-code.c"
+    break;
+
+  case 47: /* exprDOUBLE: LPAR MINUS exprDOUBLE exprDOUBLE RPAR  */
+#line 128 "simple-bison-code.y"
+                                                { }
+#line 1497 "simple-bison-code.c"
+    break;
+
+  case 48: /* exprDOUBLE: LPAR MULT exprDOUBLE exprDOUBLE RPAR  */
+#line 129 "simple-bison-code.y"
+                                               { }
+#line 1503 "simple-bison-code.c"
+    break;
+
+  case 49: /* exprDOUBLE: LPAR DIV exprDOUBLE exprDOUBLE RPAR  */
+#line 130 "simple-bison-code.y"
+                                              { }
+#line 1509 "simple-bison-code.c"
+    break;
+
+  case 50: /* exprDOUBLE: LPAR PLUS exprINT exprDOUBLE RPAR  */
+#line 131 "simple-bison-code.y"
+                                            { }
+#line 1515 "simple-bison-code.c"
+    break;
+
+  case 51: /* exprDOUBLE: LPAR PLUS exprDOUBLE exprINT RPAR  */
+#line 132 "simple-bison-code.y"
+                                            { }
+#line 1521 "simple-bison-code.c"
+    break;
+
+  case 52: /* exprDOUBLE: LPAR MINUS exprINT exprDOUBLE RPAR  */
+#line 133 "simple-bison-code.y"
+                                             { }
+#line 1527 "simple-bison-code.c"
+    break;
+
+  case 53: /* exprDOUBLE: LPAR MINUS exprDOUBLE exprINT RPAR  */
+#line 134 "simple-bison-code.y"
+                                             { }
+#line 1533 "simple-bison-code.c"
+    break;
+
+  case 54: /* exprDOUBLE: LPAR MULT exprINT exprDOUBLE RPAR  */
+#line 135 "simple-bison-code.y"
+                                            { }
+#line 1539 "simple-bison-code.c"
+    break;
+
+  case 55: /* exprDOUBLE: LPAR MULT exprDOUBLE exprINT RPAR  */
+#line 136 "simple-bison-code.y"
+                                            { }
+#line 1545 "simple-bison-code.c"
+    break;
+
+  case 56: /* exprDOUBLE: LPAR DIV exprINT exprDOUBLE RPAR  */
+#line 137 "simple-bison-code.y"
+                                           { }
+#line 1551 "simple-bison-code.c"
+    break;
+
+  case 57: /* exprDOUBLE: LPAR DIV exprDOUBLE exprINT RPAR  */
+#line 138 "simple-bison-code.y"
+                                           { }
+#line 1557 "simple-bison-code.c"
+    break;
+
+  case 58: /* exprCOMPARISON: LPAR EQUALS exprINT exprINT RPAR  */
+#line 142 "simple-bison-code.y"
+                                         { }
+#line 1563 "simple-bison-code.c"
+    break;
+
+  case 59: /* exprCOMPARISON: LPAR EQUALS exprDOUBLE exprDOUBLE RPAR  */
+#line 143 "simple-bison-code.y"
+                                                 { }
+#line 1569 "simple-bison-code.c"
+    break;
+
+  case 60: /* exprCOMPARISON: LPAR EQUALS VARIABLE exprINT RPAR  */
 #line 144 "simple-bison-code.y"
-             { (yyval.strVal) = (yyvsp[0].strVal); }
-#line 1585 "simple-bison-code.c"
+                                            { }
+#line 1575 "simple-bison-code.c"
     break;
 
-  case 67: /* exprDEFRULE: DEFRULE  */
-#line 148 "simple-bison-code.y"
-            { (yyval.strVal) = (yyvsp[0].strVal); }
+  case 61: /* exprCOMPARISON: LPAR EQUALS exprINT VARIABLE RPAR  */
+#line 145 "simple-bison-code.y"
+                                            { }
+#line 1581 "simple-bison-code.c"
+    break;
+
+  case 62: /* exprCOMPARISON: LPAR EQUALS VARIABLE VARIABLE RPAR  */
+#line 146 "simple-bison-code.y"
+                                             { }
+#line 1587 "simple-bison-code.c"
+    break;
+
+
 #line 1591 "simple-bison-code.c"
-    break;
-
-  case 68: /* exprPRINTOUT: PRINTOUT  */
-#line 152 "simple-bison-code.y"
-             { (yyval.strVal) = (yyvsp[0].strVal); }
-#line 1597 "simple-bison-code.c"
-    break;
-
-  case 69: /* expr: VARIABLE  */
-#line 156 "simple-bison-code.y"
-             { (yyval.strVal) = (yyvsp[0].strVal); }
-#line 1603 "simple-bison-code.c"
-    break;
-
-  case 70: /* expr: STRING  */
-#line 157 "simple-bison-code.y"
-             { (yyval.strVal) = (yyvsp[0].strVal); }
-#line 1609 "simple-bison-code.c"
-    break;
-
-  case 71: /* expr: COMMENT  */
-#line 158 "simple-bison-code.y"
-              { (yyval.strVal) = (yyvsp[0].strVal); }
-#line 1615 "simple-bison-code.c"
-    break;
-
-
-#line 1619 "simple-bison-code.c"
 
       default: break;
     }
@@ -1808,11 +1780,12 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 161 "simple-bison-code.y"
+#line 173 "simple-bison-code.y"
 
 
 void yyerror(const char *msg) {
     fprintf(stderr, "Bison ERROR on line: %d with error message: %s\n", line, msg);
+    countFatalErrors++;
 }
 
 /* Όταν ξεκινήσει το πρόγραμμα καλεί απευθείας το yyparse() για να
@@ -1820,9 +1793,11 @@ void yyerror(const char *msg) {
 int main(void)  {
         yyparse();
         printf("\n");
-        printf("Correct tokens = %d\n", countCorrectTokens); // WRONG
+        /* Αποτελέσματα λεκτικής και συντακτικής ανάλυσης */
+        printf("Correct tokens = %d\n", countCorrectTokens);
         printf("Correct expressions = %d\n", countCorrectExpr);
         printf("Wrong tokens = %d\n", countWrongTokens);
-        printf("Wrong expressions = %d\n", countWrongExpressions);
+        printf("Wrong expressions = %d\n", countWrongExpr);
+        printf("Fatal error(s) = %d\n", countFatalErrors);
         return 0;
 }

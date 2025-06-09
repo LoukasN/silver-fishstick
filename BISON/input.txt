@@ -1,4 +1,10 @@
-(= 5 4)
-kfasjdl
-4141212
-(= 4 1)
+(defrule move-up  (CIRCLE X ON Y) (test(= ?x 4)) -> (printout( (A ON B) (B ON A) )))
+(color A is blue)
+(number_of_cubes 2)
+(+ 1 ?sum)
+(- +3 -20 ?x1)
+(= ?num 2)
+(= 100 (+ ?num 2))
+(test (= ?num 2))
+(bind ?x (read))
+(bind ?var 15)

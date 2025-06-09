@@ -5,7 +5,7 @@
               simple-flex-code.l που εκτελεί την λεκτική ανάλυση και επιστρέφει τα
               tokens στο συντακτικό αναλυτή για έλεγχο.
 
-   Οδηγίες εκτέλεσης: make < input.txt
+   Οδηγίες εκτέλεσης: make και τρέχουμε ./simple-bison-code < input.txt
     
    Σχόλια:   Με την χρήση της εντολής make γίνεται μεταγλώττιση του αρχείου simple-bison-code.y
              που με το flag -d δημιουργεί ένα αρχείο simple-bison-code.h με τα definitions για
@@ -14,17 +14,22 @@
              το τελικό πρόγραμμα simple-bison-code.
 */
 
-/* Δηλώσεις συναρτήτσεων και βιβλιοθήκες */
+/* Δηλώσεις συναρτήσεων και βιβλιοθήκες */
 %{
     #include <stdio.h>
     #include <stdlib.h>
+    #include <string.h>
     int yylex();
+    /* Συνάρτηση για εμφάνιση συντακτικών λαθών*/
     void yyerror(const char *msg);
-    int countCorrectExpr = 0, countWrongExpressions = 0;
+    /* Μετρητές */
+    int countCorrectExpr = 0, countWrongExpr = 0, countFatalErrors = 0;
+    /* Συναρτήσεις που δηλώνονται σε άλλα αρχεία*/
     extern int line, countWrongTokens, countCorrectTokens;
     extern char* yytext;
 %}
 
+/* Τύποι των στοιχείων που γυρνάει ο flex */
 %union {
     int intVal;
     double doubleVal;
@@ -34,134 +39,142 @@
 /* Δηλώσεις για αναγνωρίσημα tokens από το bison και το flex */
 %token <intVal> INTCONST
 %token <doubleVal> DOUBLE
-%token <strVal> VARIABLE STRING NAME COMMENT BIND TEST READ DEFFACTS DEFRULE PRINTOUT 
-%token PLUS DELIMITER NEWLINE MINUS MULT DIV EQUALS LPAR RPAR TOKEN_ERROR
+%token <strVal> VARIABLE STRING NAME COMMENT
+%token BIND TEST READ DEFFACTS DEFRULE PRINTOUT 
+%token PLUS MINUS MULT DIV EQUALS
+%token LPAR RPAR 
+%token DELIMITER NEWLINE TOKEN_ERROR ARROW
 
 /* Δηλώσεις για τύπους των tokens*/
-%type <intVal> exprINT exprEQUALS exprTEST 
+%type <intVal> exprINT 
 %type <doubleVal> exprDOUBLE
-%type <strVal> expr exprBIND exprDEFFACTS exprDEFRULE exprPRINTOUT exprEVENT exprEVENTS
+%type <strVal> expr
 
 /* Προτεραιότητες των tokens (Αύξουσα σειρά) */
 %left EQUALS
 %left PLUS MINUS
 %left MULT DIV
-%left LPAR RPAR
 
 /* Αρχή του προγράμματος */
 %start program
 
 %%
 program:
-        program expr NEWLINE { printf("expr %s\n", $2); countCorrectExpr++; }
-        | program exprBIND NEWLINE { countCorrectExpr++; }
-        | program exprTEST NEWLINE { countCorrectExpr++; }
-        | program exprEVENT NEWLINE { printf("%s\n", $2); countCorrectExpr++; }
-        | program exprDEFFACTS NEWLINE { printf("%s\n", $2); countCorrectExpr++; }
-        | program exprDEFRULE NEWLINE { printf("%s\n", $2); countCorrectExpr++; }
-        | program exprPRINTOUT NEWLINE { printf("%s\n", $2); countCorrectExpr++; }
-        | program exprINT NEWLINE { printf("%d\n", $2); countCorrectExpr++; }
-        | program exprDOUBLE NEWLINE { countCorrectExpr++; }
-        | program exprEQUALS NEWLINE { countCorrectExpr++; }
-        | program error NEWLINE { countWrongExpressions++; }
-        | ;
+        | program line
+        ;
+
+line:
+        NEWLINE { }
+        | exprERRORCALC { countWrongExpr++; }
+        | exprERRORCOMP { countWrongExpr++; }
+        | expr NEWLINE { countCorrectExpr++; }
+        | exprINT NEWLINE { countCorrectExpr++; }
+        | exprDOUBLE NEWLINE { countCorrectExpr++; }
+        | exprCOMPARISON NEWLINE { countCorrectExpr++; }
+        | exprEVENTS NEWLINE { countCorrectExpr++; }
+        | error NEWLINE {  countWrongExpr++; yyerrok; }
+        ;
+
+exprERRORCALC:
+        LPAR PLUS exprINT exprDOUBLE RPAR { printf("WARNING: Cannot add integer with double on line %d\n", line); }
+        | LPAR MINUS exprINT exprDOUBLE RPAR { printf("WARNING: Cannot subtract integer with double on line %d\n", line); }
+        | LPAR MULT exprINT exprDOUBLE RPAR { printf("WARNING: Cannot multiply integer with double on line %d\n", line); }
+        | LPAR DIV exprINT exprDOUBLE RPAR { printf("WARNING: Cannot divide integer with double on line %d\n", line); }
+        | LPAR PLUS exprDOUBLE exprINT RPAR { printf("WARNING: Cannot add double with integer on line %d\n", line); }
+        | LPAR MINUS exprDOUBLE exprINT RPAR { printf("WARNING: Cannot subtract double with integer on line %d\n", line); }
+        | LPAR MULT exprDOUBLE exprINT RPAR { printf("WARNING: Cannot multiply double with integer on line %d\n", line); }
+        | LPAR DIV exprDOUBLE exprINT RPAR { printf("WARNING: Cannot divide double with integer on line %d\n", line); }
+        ; 
+
+exprERRORCOMP:
+        LPAR EQUALS exprINT exprDOUBLE RPAR { printf("WARNING: Cannot compare integer with double on line %d\n", line); }
+        | LPAR EQUALS exprDOUBLE exprINT RPAR { printf("WARNING: Cannot compare double with integer on line %d\n", line); }
+        ;
+
+expr:
+        VARIABLE { }
+        | STRING { }
+        | NAME { }
+        | LPAR BIND VARIABLE exprVALUE RPAR { }
+        | LPAR TEST exprCOMPARISON RPAR { }
+        | LPAR DEFFACTS NAME exprEVENTS RPAR { }
+        | LPAR DEFRULE NAME exprEVENTS LPAR TEST exprCOMPARISON RPAR ARROW LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR RPAR { }
+        | LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR { }
+        ;
+
+exprVALUE:
+        INTCONST { }
+        | DOUBLE { }
+        | STRING { }
+        | LPAR READ RPAR { }
+        | exprINT { }
+        | exprDOUBLE { }
+        | exprCOMPARISON { }
+        ;
 
 exprINT:
-        LPAR PLUS INTCONST INTCONST RPAR { }
-        | LPAR PLUS VARIABLE INTCONST RPAR { }
-        | LPAR PLUS INTCONST VARIABLE RPAR { }
-        | LPAR PLUS VARIABLE VARIABLE RPAR { }
-        | LPAR PLUS exprINT INTCONST RPAR { $$ = $3 + $4; }
-        | LPAR MINUS INTCONST INTCONST RPAR  { $$ = $3 - $4; }
-        | LPAR MINUS VARIABLE INTCONST RPAR { }
-        | LPAR MINUS INTCONST VARIABLE RPAR { }
-        | LPAR MINUS VARIABLE VARIABLE RPAR { }
-        | LPAR MULT INTCONST INTCONST RPAR{ $$ = $3 * $4; }
-        | LPAR MULT VARIABLE INTCONST RPAR{ }
-        | LPAR MULT INTCONST VARIABLE RPAR{ }
-        | LPAR MULT VARIABLE VARIABLE RPAR { }
-        | LPAR DIV INTCONST INTCONST  RPAR{ $$ = $3 / $4; }
-        | LPAR DIV VARIABLE INTCONST RPAR{ }
-        | LPAR DIV INTCONST VARIABLE RPAR{ }
-        | LPAR DIV VARIABLE VARIABLE RPAR { }
+        INTCONST {  }
+        | VARIABLE { }
+        | LPAR PLUS exprINT exprINT RPAR { }
+        | LPAR MINUS exprINT exprINT RPAR { }
+        | LPAR MULT exprINT exprINT RPAR { }
+        | LPAR DIV exprINT exprINT RPAR { }
         ;
 
 exprDOUBLE:
-        DOUBLE { $$ = $1; }
-        | PLUS exprDOUBLE exprDOUBLE { $$ = $2 + $3; }
-        | PLUS exprINT exprDOUBLE { $$ = $2 + $3; }
-        | PLUS exprDOUBLE exprINT { $$ = $2 + $3; }
-        | MINUS exprDOUBLE exprDOUBLE   { $$ = $2 - $3; }
-        | MINUS exprINT exprDOUBLE   { $$ = $2 - $3; }
-        | MINUS exprDOUBLE exprINT   { $$ = $2 - $3; }
-        | MULT exprDOUBLE exprDOUBLE   { $$ = $2 * $3; }
-        | MULT exprINT exprDOUBLE   { $$ = $2 * $3; }
-        | MULT exprDOUBLE exprINT   { $$ = $2 * $3; }
-        | DIV exprDOUBLE exprDOUBLE   { $$ = $2 / $3; }
-        | DIV exprINT exprDOUBLE   { $$ = $2 / $3; }
-        | DIV exprDOUBLE exprINT   { $$ = $2 / $3; }
+        DOUBLE {  }
+        | VARIABLE { }
+        | LPAR PLUS exprDOUBLE exprDOUBLE RPAR { }
+        | LPAR MINUS exprDOUBLE exprDOUBLE RPAR { }
+        | LPAR MULT exprDOUBLE exprDOUBLE RPAR { }
+        | LPAR DIV exprDOUBLE exprDOUBLE RPAR { }
+        | LPAR PLUS exprINT exprDOUBLE RPAR { }
+        | LPAR PLUS exprDOUBLE exprINT RPAR { }
+        | LPAR MINUS exprINT exprDOUBLE RPAR { }
+        | LPAR MINUS exprDOUBLE exprINT RPAR { }
+        | LPAR MULT exprINT exprDOUBLE RPAR { }
+        | LPAR MULT exprDOUBLE exprINT RPAR { }
+        | LPAR DIV exprINT exprDOUBLE RPAR { }
+        | LPAR DIV exprDOUBLE exprINT RPAR { }
         ;
 
-exprEQUALS:
-        LPAR EQUALS VARIABLE INTCONST RPAR { }
-        | LPAR EQUALS INTCONST VARIABLE RPAR { }
-        | LPAR EQUALS VARIABLE exprINT RPAR { } 
-        | LPAR EQUALS exprINT VARIABLE RPAR { } 
-        | LPAR EQUALS INTCONST exprINT RPAR { } 
-        | LPAR EQUALS exprINT INTCONST RPAR { } 
+exprCOMPARISON:
+        LPAR EQUALS exprINT exprINT RPAR { }
+        | LPAR EQUALS exprDOUBLE exprDOUBLE RPAR { }
+        | LPAR EQUALS VARIABLE exprINT RPAR { }
+        | LPAR EQUALS exprINT VARIABLE RPAR { }
+        | LPAR EQUALS VARIABLE VARIABLE RPAR { }
         ;
-
-exprBIND:
-    BIND { $$ = $1;  }
-    | LPAR exprBIND VARIABLE INTCONST RPAR { $$ = $3; }
-    | LPAR exprBIND VARIABLE LPAR exprINT RPAR RPAR { $$ = $3; }
-    | LPAR exprBIND VARIABLE LPAR exprDOUBLE RPAR RPAR { $$ = $3; }
-    | LPAR exprBIND VARIABLE LPAR READ RPAR RPAR { $$ = $3; }
-    ;
-    
-exprTEST:
-    TEST {  }
-    | LPAR exprTEST LPAR exprEQUALS RPAR RPAR { $$ = $4;  }
-    | LPAR exprTEST LPAR EQUALS VARIABLE INTCONST RPAR RPAR { }
-    | LPAR exprTEST LPAR EQUALS INTCONST VARIABLE RPAR RPAR { }
-    | LPAR exprTEST LPAR EQUALS DOUBLE VARIABLE RPAR RPAR { }
-    | LPAR exprTEST LPAR EQUALS VARIABLE DOUBLE RPAR RPAR { }
-    | LPAR exprTEST LPAR EQUALS VARIABLE VARIABLE RPAR RPAR { }
-    ;
 
 exprEVENTS:
-    /* empty */
-    NAME { }
-    | INTCONST { }
-    | exprEVENT exprEVENTS { }
-    ;
+        | exprEVENT exprEVENTS
+        ;
 
 exprEVENT:
-    LPAR exprEVENTS RPAR { }
-    ;
+        LPAR exprELEMENTS exprELEMENTS RPAR
+        ;
 
-exprDEFFACTS:
-    DEFFACTS { $$ = $1; }
-    ;
+exprGROUPS:
+        | exprGROUP exprGROUPS
+        ;
 
-exprDEFRULE:
-    DEFRULE { $$ = $1; }
-    ;
+exprGROUP:
+        LPAR exprELEMENTS RPAR
+        ;
 
-exprPRINTOUT:
-    PRINTOUT { $$ = $1; }
-    ;
-
-expr: 
-    VARIABLE { $$ = $1; }
-    | STRING { $$ = $1; }
-    | COMMENT { $$ = $1; }
-    ;
+exprELEMENTS:
+        | NAME exprELEMENTS
+        | INTCONST exprELEMENTS
+        | DOUBLE exprELEMENTS
+        | STRING exprELEMENTS
+        | VARIABLE exprELEMENTS
+        ;
 
 %%
 
 void yyerror(const char *msg) {
     fprintf(stderr, "Bison ERROR on line: %d with error message: %s\n", line, msg);
+    countFatalErrors++;
 }
 
 /* Όταν ξεκινήσει το πρόγραμμα καλεί απευθείας το yyparse() για να
@@ -169,9 +182,11 @@ void yyerror(const char *msg) {
 int main(void)  {
         yyparse();
         printf("\n");
-        printf("Correct tokens = %d\n", countCorrectTokens); // WRONG
+        /* Αποτελέσματα λεκτικής και συντακτικής ανάλυσης */
+        printf("Correct tokens = %d\n", countCorrectTokens);
         printf("Correct expressions = %d\n", countCorrectExpr);
         printf("Wrong tokens = %d\n", countWrongTokens);
-        printf("Wrong expressions = %d\n", countWrongExpressions);
+        printf("Wrong expressions = %d\n", countWrongExpr);
+        printf("Fatal error(s) = %d\n", countFatalErrors);
         return 0;
 }

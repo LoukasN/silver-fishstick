@@ -1,22 +1,23 @@
 /* Όνομα αρχείου:       simple-flex-code.l
    Περιγραφή:           Λεκτικός αναλυτής για την γλώσσα Uni-Clips
-   Οδηγίες εκτέλεσης:   Με την χρήση της εντολής make διαβάζεται το περιεχόμενο του αρχείου
-                        input.txt και τα αποτελέσματα τυπώνονται στην οθόνη
+   Οδηγίες εκτέλεσης:   Λειτουργεί σε συνδυασμό με το simple-bison-code.y για
+                        την αναγνώριση λεκτικών μονάδων
 */
 
 %x error
 %option noyywrap
+
 /* Τμήμα ορισμών του προγράμματος */
-
 %{
-
 /* Βιβλιοθήκες της C που χρησιμοποιούνται */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-/* Definitions για τα tokens από το bison */
+
+/* Definitions για τα tokens που δημιουργούνται αυτόματα από το simple-bison-code.y */
 #include "simple-bison-code.h"
 int line = 1;
+/* Μετρητές για αναγνώριση λαθών και μη αποδεκτών tokens*/
 int countWrongTokens = 0;
 int countCorrectTokens = 0;
 
@@ -32,21 +33,22 @@ VARIABLE        \?[A-Za-z0-9]+
 NAME            [A-Za-z][A-Za-z0-9_-]*
 
 %%
-bind              { yylval.strVal = strdup(yytext); return BIND; }
-test              { yylval.strVal = strdup(yytext); return TEST; }
-read              { yylval.strVal = strdup(yytext); return READ; }
-deffacts          { yylval.strVal = strdup(yytext); return DEFFACTS; }
-defrule           { yylval.strVal = strdup(yytext); return DEFRULE; }
-printout          { yylval.strVal = strdup(yytext); return PRINTOUT; }
+"bind"            { countCorrectTokens++; yylval.strVal = strdup(yytext); return BIND; }
+"test"            { countCorrectTokens++; yylval.strVal = strdup(yytext); return TEST; }
+"read"            { countCorrectTokens++; yylval.strVal = strdup(yytext); return READ; }
+"deffacts"        { countCorrectTokens++; yylval.strVal = strdup(yytext); return DEFFACTS; }
+"defrule"         { countCorrectTokens++; yylval.strVal = strdup(yytext); return DEFRULE; }
+"printout"        { countCorrectTokens++; yylval.strVal = strdup(yytext); return PRINTOUT; }
 
-{DELIMITER}     { return DELIMITER; }
+{DELIMITER}     { }
 {INTCONST}      { countCorrectTokens++; yylval.intVal = atoi(yytext); return INTCONST; }
 {DOUBLE}        { countCorrectTokens++; yylval.doubleVal = atof(yytext); return DOUBLE; }
 {STRING}        { countCorrectTokens++; yylval.strVal = strdup(yytext); return STRING; }
-{COMMENT}       { return COMMENT; }
+{COMMENT}       { }
 {VARIABLE}      { countCorrectTokens++; yylval.strVal = strdup(yytext); return VARIABLE; }
 {NAME}          { countCorrectTokens++; yylval.strVal = strdup(yytext); return NAME; }
 
+"->"            { countCorrectTokens++; return ARROW; }
 
 \(              { countCorrectTokens++; return LPAR; }
 \)              { countCorrectTokens++; return RPAR; }
@@ -57,7 +59,18 @@ printout          { yylval.strVal = strdup(yytext); return PRINTOUT; }
 \=              { countCorrectTokens++; return EQUALS; }
 \n              { line++; return NEWLINE; }
 
-.               { printf("Not recognized token: %s\n", yytext); countWrongTokens++; BEGIN(error); return TOKEN_ERROR;}
-<error>\n       { line++; }
+"-->"           { countCorrectTokens++; printf("FLEX WARNING: Double dash detected on the \"->\" symbol on line %d\n", line); return ARROW; }
 
+\++             { countCorrectTokens++; printf("FLEX WARNING: Multiple \"+\" operators given on line %d\n", line); return PLUS; }
+\-+             { countCorrectTokens++; printf("FLEX WARNING: Multiple \"-\" operators given on line %d\n", line); return MINUS; }
+\*+             { countCorrectTokens++; printf("FLEX WARNING: Multiple \"*\" operators given on line %d\n", line); return MULT; }
+\/+             { countCorrectTokens++; printf("FLEX WARNING: Multiple \"/\" operators given on line %d\n", line); return DIV; }
+\=+             { countCorrectTokens++; printf("FLEX WARNING: Multiple \"=\" operators given on line %d\n", line); return EQUALS; }
+
+\(\)            { printf("FLEX WARNING: Empty parenthesis found on line %d\n", line); }
+
+
+.               { printf("Not recognized token: %s\n", yytext); countWrongTokens++; BEGIN(error); return TOKEN_ERROR; }
+<error>.        { countWrongTokens++; }
+<error>\n       { line++; BEGIN(0); }
 %%

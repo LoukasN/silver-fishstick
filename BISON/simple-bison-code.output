@@ -1,171 +1,212 @@
 Terminals unused in grammar
 
+    COMMENT
     DELIMITER
     TOKEN_ERROR
+
+
+State 1 conflicts: 1 shift/reduce
+State 6 conflicts: 2 reduce/reduce
+State 9 conflicts: 5 shift/reduce
+State 19 conflicts: 1 shift/reduce
+State 21 conflicts: 5 shift/reduce
+State 22 conflicts: 5 shift/reduce
+State 23 conflicts: 5 shift/reduce
+State 24 conflicts: 5 shift/reduce
+State 25 conflicts: 5 shift/reduce
+State 42 conflicts: 5 shift/reduce
+State 53 conflicts: 1 shift/reduce
+State 55 conflicts: 5 reduce/reduce
+State 65 conflicts: 3 shift/reduce, 4 reduce/reduce
+State 69 conflicts: 1 reduce/reduce
+State 70 conflicts: 1 reduce/reduce
+State 104 conflicts: 1 shift/reduce
+State 107 conflicts: 1 shift/reduce, 1 reduce/reduce
+State 131 conflicts: 1 reduce/reduce
+State 132 conflicts: 1 reduce/reduce
+State 135 conflicts: 1 reduce/reduce
+State 136 conflicts: 1 reduce/reduce
+State 139 conflicts: 1 reduce/reduce
+State 140 conflicts: 1 reduce/reduce
+State 143 conflicts: 1 reduce/reduce
+State 144 conflicts: 1 reduce/reduce
+State 158 conflicts: 1 shift/reduce
 
 
 Grammar
 
     0 $accept: program $end
 
-    1 program: program expr NEWLINE
-    2        | program exprBIND NEWLINE
-    3        | program exprTEST NEWLINE
-    4        | program exprEVENT NEWLINE
-    5        | program exprDEFFACTS NEWLINE
-    6        | program exprDEFRULE NEWLINE
-    7        | program exprPRINTOUT NEWLINE
-    8        | program exprINT NEWLINE
-    9        | program exprDOUBLE NEWLINE
-   10        | program exprEQUALS NEWLINE
-   11        | program error NEWLINE
-   12        | ε
+    1 program: ε
+    2        | program line
 
-   13 exprINT: LPAR PLUS INTCONST INTCONST RPAR
-   14        | LPAR PLUS VARIABLE INTCONST RPAR
-   15        | LPAR PLUS INTCONST VARIABLE RPAR
-   16        | LPAR PLUS VARIABLE VARIABLE RPAR
-   17        | LPAR PLUS exprINT INTCONST RPAR
-   18        | LPAR MINUS INTCONST INTCONST RPAR
-   19        | LPAR MINUS VARIABLE INTCONST RPAR
-   20        | LPAR MINUS INTCONST VARIABLE RPAR
-   21        | LPAR MINUS VARIABLE VARIABLE RPAR
-   22        | LPAR MULT INTCONST INTCONST RPAR
-   23        | LPAR MULT VARIABLE INTCONST RPAR
-   24        | LPAR MULT INTCONST VARIABLE RPAR
-   25        | LPAR MULT VARIABLE VARIABLE RPAR
-   26        | LPAR DIV INTCONST INTCONST RPAR
-   27        | LPAR DIV VARIABLE INTCONST RPAR
-   28        | LPAR DIV INTCONST VARIABLE RPAR
-   29        | LPAR DIV VARIABLE VARIABLE RPAR
+    3 line: NEWLINE
+    4     | exprERRORCALC
+    5     | exprERRORCOMP
+    6     | expr NEWLINE
+    7     | exprINT NEWLINE
+    8     | exprDOUBLE NEWLINE
+    9     | exprCOMPARISON NEWLINE
+   10     | exprEVENTS NEWLINE
+   11     | error NEWLINE
 
-   30 exprDOUBLE: DOUBLE
-   31           | PLUS exprDOUBLE exprDOUBLE
-   32           | PLUS exprINT exprDOUBLE
-   33           | PLUS exprDOUBLE exprINT
-   34           | MINUS exprDOUBLE exprDOUBLE
-   35           | MINUS exprINT exprDOUBLE
-   36           | MINUS exprDOUBLE exprINT
-   37           | MULT exprDOUBLE exprDOUBLE
-   38           | MULT exprINT exprDOUBLE
-   39           | MULT exprDOUBLE exprINT
-   40           | DIV exprDOUBLE exprDOUBLE
-   41           | DIV exprINT exprDOUBLE
-   42           | DIV exprDOUBLE exprINT
+   12 exprERRORCALC: LPAR PLUS exprINT exprDOUBLE RPAR
+   13              | LPAR MINUS exprINT exprDOUBLE RPAR
+   14              | LPAR MULT exprINT exprDOUBLE RPAR
+   15              | LPAR DIV exprINT exprDOUBLE RPAR
+   16              | LPAR PLUS exprDOUBLE exprINT RPAR
+   17              | LPAR MINUS exprDOUBLE exprINT RPAR
+   18              | LPAR MULT exprDOUBLE exprINT RPAR
+   19              | LPAR DIV exprDOUBLE exprINT RPAR
 
-   43 exprEQUALS: LPAR EQUALS VARIABLE INTCONST RPAR
-   44           | LPAR EQUALS INTCONST VARIABLE RPAR
-   45           | LPAR EQUALS VARIABLE exprINT RPAR
-   46           | LPAR EQUALS exprINT VARIABLE RPAR
-   47           | LPAR EQUALS INTCONST exprINT RPAR
-   48           | LPAR EQUALS exprINT INTCONST RPAR
+   20 exprERRORCOMP: LPAR EQUALS exprINT exprDOUBLE RPAR
+   21              | LPAR EQUALS exprDOUBLE exprINT RPAR
 
-   49 exprBIND: BIND
-   50         | LPAR exprBIND VARIABLE INTCONST RPAR
-   51         | LPAR exprBIND VARIABLE LPAR exprINT RPAR RPAR
-   52         | LPAR exprBIND VARIABLE LPAR exprDOUBLE RPAR RPAR
-   53         | LPAR exprBIND VARIABLE LPAR READ RPAR RPAR
+   22 expr: VARIABLE
+   23     | STRING
+   24     | NAME
+   25     | LPAR BIND VARIABLE exprVALUE RPAR
+   26     | LPAR TEST exprCOMPARISON RPAR
+   27     | LPAR DEFFACTS NAME exprEVENTS RPAR
+   28     | LPAR DEFRULE NAME exprEVENTS LPAR TEST exprCOMPARISON RPAR ARROW LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR RPAR
+   29     | LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR
 
-   54 exprTEST: TEST
-   55         | LPAR exprTEST LPAR exprEQUALS RPAR RPAR
-   56         | LPAR exprTEST LPAR EQUALS VARIABLE INTCONST RPAR RPAR
-   57         | LPAR exprTEST LPAR EQUALS INTCONST VARIABLE RPAR RPAR
-   58         | LPAR exprTEST LPAR EQUALS DOUBLE VARIABLE RPAR RPAR
-   59         | LPAR exprTEST LPAR EQUALS VARIABLE DOUBLE RPAR RPAR
-   60         | LPAR exprTEST LPAR EQUALS VARIABLE VARIABLE RPAR RPAR
+   30 exprVALUE: INTCONST
+   31          | DOUBLE
+   32          | STRING
+   33          | LPAR READ RPAR
+   34          | exprINT
+   35          | exprDOUBLE
+   36          | exprCOMPARISON
 
-   61 exprEVENTS: NAME
-   62           | INTCONST
+   37 exprINT: INTCONST
+   38        | VARIABLE
+   39        | LPAR PLUS exprINT exprINT RPAR
+   40        | LPAR MINUS exprINT exprINT RPAR
+   41        | LPAR MULT exprINT exprINT RPAR
+   42        | LPAR DIV exprINT exprINT RPAR
+
+   43 exprDOUBLE: DOUBLE
+   44           | VARIABLE
+   45           | LPAR PLUS exprDOUBLE exprDOUBLE RPAR
+   46           | LPAR MINUS exprDOUBLE exprDOUBLE RPAR
+   47           | LPAR MULT exprDOUBLE exprDOUBLE RPAR
+   48           | LPAR DIV exprDOUBLE exprDOUBLE RPAR
+   49           | LPAR PLUS exprINT exprDOUBLE RPAR
+   50           | LPAR PLUS exprDOUBLE exprINT RPAR
+   51           | LPAR MINUS exprINT exprDOUBLE RPAR
+   52           | LPAR MINUS exprDOUBLE exprINT RPAR
+   53           | LPAR MULT exprINT exprDOUBLE RPAR
+   54           | LPAR MULT exprDOUBLE exprINT RPAR
+   55           | LPAR DIV exprINT exprDOUBLE RPAR
+   56           | LPAR DIV exprDOUBLE exprINT RPAR
+
+   57 exprCOMPARISON: LPAR EQUALS exprINT exprINT RPAR
+   58               | LPAR EQUALS exprDOUBLE exprDOUBLE RPAR
+   59               | LPAR EQUALS VARIABLE exprINT RPAR
+   60               | LPAR EQUALS exprINT VARIABLE RPAR
+   61               | LPAR EQUALS VARIABLE VARIABLE RPAR
+
+   62 exprEVENTS: ε
    63           | exprEVENT exprEVENTS
 
-   64 exprEVENT: LPAR exprEVENTS RPAR
+   64 exprEVENT: LPAR exprELEMENTS exprELEMENTS RPAR
 
-   65 exprDEFFACTS: DEFFACTS
+   65 exprGROUPS: ε
+   66           | exprGROUP exprGROUPS
 
-   66 exprDEFRULE: DEFRULE
+   67 exprGROUP: LPAR exprELEMENTS RPAR
 
-   67 exprPRINTOUT: PRINTOUT
-
-   68 expr: VARIABLE
-   69     | STRING
-   70     | COMMENT
+   68 exprELEMENTS: ε
+   69             | NAME exprELEMENTS
+   70             | INTCONST exprELEMENTS
+   71             | DOUBLE exprELEMENTS
+   72             | STRING exprELEMENTS
+   73             | VARIABLE exprELEMENTS
 
 
 Terminals, with rules where they appear
 
     $end (0) 0
     error (256) 11
-    INTCONST <intVal> (258) 13 14 15 17 18 19 20 22 23 24 26 27 28 43 44 47 48 50 56 57 62
-    DOUBLE <doubleVal> (259) 30 58 59
-    VARIABLE <strVal> (260) 14 15 16 19 20 21 23 24 25 27 28 29 43 44 45 46 50 51 52 53 56 57 58 59 60 68
-    STRING <strVal> (261) 69
-    NAME <strVal> (262) 61
-    COMMENT <strVal> (263) 70
-    BIND <strVal> (264) 49
-    TEST <strVal> (265) 54
-    READ <strVal> (266) 53
-    DEFFACTS <strVal> (267) 65
-    DEFRULE <strVal> (268) 66
-    PRINTOUT <strVal> (269) 67
-    PLUS (270) 13 14 15 16 17 31 32 33
-    DELIMITER (271)
-    NEWLINE (272) 1 2 3 4 5 6 7 8 9 10 11
-    MINUS (273) 18 19 20 21 34 35 36
-    MULT (274) 22 23 24 25 37 38 39
-    DIV (275) 26 27 28 29 40 41 42
-    EQUALS (276) 43 44 45 46 47 48 56 57 58 59 60
-    LPAR (277) 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 43 44 45 46 47 48 50 51 52 53 55 56 57 58 59 60 64
-    RPAR (278) 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 43 44 45 46 47 48 50 51 52 53 55 56 57 58 59 60 64
+    INTCONST <intVal> (258) 30 37 70
+    DOUBLE <doubleVal> (259) 31 43 71
+    VARIABLE <strVal> (260) 22 25 38 44 59 60 61 73
+    STRING <strVal> (261) 23 32 72
+    NAME <strVal> (262) 24 27 28 69
+    COMMENT <strVal> (263)
+    BIND (264) 25
+    TEST (265) 26 28
+    READ (266) 33
+    DEFFACTS (267) 27
+    DEFRULE (268) 28
+    PRINTOUT (269) 28 29
+    PLUS (270) 12 16 39 45 49 50
+    MINUS (271) 13 17 40 46 51 52
+    MULT (272) 14 18 41 47 53 54
+    DIV (273) 15 19 42 48 55 56
+    EQUALS (274) 20 21 57 58 59 60 61
+    LPAR (275) 12 13 14 15 16 17 18 19 20 21 25 26 27 28 29 33 39 40 41 42 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 64 67
+    RPAR (276) 12 13 14 15 16 17 18 19 20 21 25 26 27 28 29 33 39 40 41 42 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 64 67
+    DELIMITER (277)
+    NEWLINE (278) 3 6 7 8 9 10 11
     TOKEN_ERROR (279)
+    ARROW (280) 28
 
 
 Nonterminals, with rules where they appear
 
-    $accept (25)
+    $accept (26)
         on left: 0
-    program (26)
-        on left: 1 2 3 4 5 6 7 8 9 10 11 12
-        on right: 0 1 2 3 4 5 6 7 8 9 10 11
-    exprINT <intVal> (27)
-        on left: 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29
-        on right: 8 17 32 33 35 36 38 39 41 42 45 46 47 48 51
-    exprDOUBLE <doubleVal> (28)
-        on left: 30 31 32 33 34 35 36 37 38 39 40 41 42
-        on right: 9 31 32 33 34 35 36 37 38 39 40 41 42 52
-    exprEQUALS <intVal> (29)
-        on left: 43 44 45 46 47 48
-        on right: 10 55
-    exprBIND <strVal> (30)
-        on left: 49 50 51 52 53
-        on right: 2 50 51 52 53
-    exprTEST <intVal> (31)
-        on left: 54 55 56 57 58 59 60
-        on right: 3 55 56 57 58 59 60
-    exprEVENTS <strVal> (32)
-        on left: 61 62 63
-        on right: 63 64
-    exprEVENT <strVal> (33)
-        on left: 64
-        on right: 4 63
-    exprDEFFACTS <strVal> (34)
-        on left: 65
+    program (27)
+        on left: 1 2
+        on right: 0 2
+    line (28)
+        on left: 3 4 5 6 7 8 9 10 11
+        on right: 2
+    exprERRORCALC (29)
+        on left: 12 13 14 15 16 17 18 19
+        on right: 4
+    exprERRORCOMP (30)
+        on left: 20 21
         on right: 5
-    exprDEFRULE <strVal> (35)
-        on left: 66
+    expr <strVal> (31)
+        on left: 22 23 24 25 26 27 28 29
         on right: 6
-    exprPRINTOUT <strVal> (36)
+    exprVALUE (32)
+        on left: 30 31 32 33 34 35 36
+        on right: 25
+    exprINT <intVal> (33)
+        on left: 37 38 39 40 41 42
+        on right: 7 12 13 14 15 16 17 18 19 20 21 34 39 40 41 42 49 50 51 52 53 54 55 56 57 59 60
+    exprDOUBLE <doubleVal> (34)
+        on left: 43 44 45 46 47 48 49 50 51 52 53 54 55 56
+        on right: 8 12 13 14 15 16 17 18 19 20 21 35 45 46 47 48 49 50 51 52 53 54 55 56 58
+    exprCOMPARISON (35)
+        on left: 57 58 59 60 61
+        on right: 9 26 28 36
+    exprEVENTS (36)
+        on left: 62 63
+        on right: 10 27 28 63
+    exprEVENT (37)
+        on left: 64
+        on right: 63
+    exprGROUPS (38)
+        on left: 65 66
+        on right: 28 29 66
+    exprGROUP (39)
         on left: 67
-        on right: 7
-    expr <strVal> (37)
-        on left: 68 69 70
-        on right: 1
+        on right: 66
+    exprELEMENTS (40)
+        on left: 68 69 70 71 72 73
+        on right: 64 67 69 70 71 72 73
 
 
 State 0
 
     0 $accept: • program $end
 
-    $default  reduce using rule 12 (program)
+    $default  reduce using rule 1 (program)
 
     program  go to state 1
 
@@ -173,45 +214,29 @@ State 0
 State 1
 
     0 $accept: program • $end
-    1 program: program • expr NEWLINE
-    2        | program • exprBIND NEWLINE
-    3        | program • exprTEST NEWLINE
-    4        | program • exprEVENT NEWLINE
-    5        | program • exprDEFFACTS NEWLINE
-    6        | program • exprDEFRULE NEWLINE
-    7        | program • exprPRINTOUT NEWLINE
-    8        | program • exprINT NEWLINE
-    9        | program • exprDOUBLE NEWLINE
-   10        | program • exprEQUALS NEWLINE
-   11        | program • error NEWLINE
+    2 program: program • line
 
     $end      shift, and go to state 2
     error     shift, and go to state 3
-    DOUBLE    shift, and go to state 4
-    VARIABLE  shift, and go to state 5
-    STRING    shift, and go to state 6
-    COMMENT   shift, and go to state 7
-    BIND      shift, and go to state 8
-    TEST      shift, and go to state 9
-    DEFFACTS  shift, and go to state 10
-    DEFRULE   shift, and go to state 11
-    PRINTOUT  shift, and go to state 12
-    PLUS      shift, and go to state 13
-    MINUS     shift, and go to state 14
-    MULT      shift, and go to state 15
-    DIV       shift, and go to state 16
-    LPAR      shift, and go to state 17
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 6
+    STRING    shift, and go to state 7
+    NAME      shift, and go to state 8
+    LPAR      shift, and go to state 9
+    NEWLINE   shift, and go to state 10
 
-    exprINT       go to state 18
-    exprDOUBLE    go to state 19
-    exprEQUALS    go to state 20
-    exprBIND      go to state 21
-    exprTEST      go to state 22
-    exprEVENT     go to state 23
-    exprDEFFACTS  go to state 24
-    exprDEFRULE   go to state 25
-    exprPRINTOUT  go to state 26
-    expr          go to state 27
+    NEWLINE  [reduce using rule 62 (exprEVENTS)]
+
+    line            go to state 11
+    exprERRORCALC   go to state 12
+    exprERRORCOMP   go to state 13
+    expr            go to state 14
+    exprINT         go to state 15
+    exprDOUBLE      go to state 16
+    exprCOMPARISON  go to state 17
+    exprEVENTS      go to state 18
+    exprEVENT       go to state 19
 
 
 State 2
@@ -223,1464 +248,2072 @@ State 2
 
 State 3
 
-   11 program: program error • NEWLINE
+   11 line: error • NEWLINE
 
-    NEWLINE  shift, and go to state 28
+    NEWLINE  shift, and go to state 20
 
 
 State 4
 
-   30 exprDOUBLE: DOUBLE •
+   37 exprINT: INTCONST •
 
-    $default  reduce using rule 30 (exprDOUBLE)
+    $default  reduce using rule 37 (exprINT)
 
 
 State 5
 
-   68 expr: VARIABLE •
+   43 exprDOUBLE: DOUBLE •
 
-    $default  reduce using rule 68 (expr)
+    $default  reduce using rule 43 (exprDOUBLE)
 
 
 State 6
 
-   69 expr: STRING •
+   22 expr: VARIABLE •
+   38 exprINT: VARIABLE •
+   44 exprDOUBLE: VARIABLE •
 
-    $default  reduce using rule 69 (expr)
+    NEWLINE   reduce using rule 22 (expr)
+    NEWLINE   [reduce using rule 38 (exprINT)]
+    NEWLINE   [reduce using rule 44 (exprDOUBLE)]
+    $default  reduce using rule 22 (expr)
 
 
 State 7
 
-   70 expr: COMMENT •
+   23 expr: STRING •
 
-    $default  reduce using rule 70 (expr)
+    $default  reduce using rule 23 (expr)
 
 
 State 8
 
-   49 exprBIND: BIND •
+   24 expr: NAME •
 
-    $default  reduce using rule 49 (exprBIND)
+    $default  reduce using rule 24 (expr)
 
 
 State 9
 
-   54 exprTEST: TEST •
+   12 exprERRORCALC: LPAR • PLUS exprINT exprDOUBLE RPAR
+   13              | LPAR • MINUS exprINT exprDOUBLE RPAR
+   14              | LPAR • MULT exprINT exprDOUBLE RPAR
+   15              | LPAR • DIV exprINT exprDOUBLE RPAR
+   16              | LPAR • PLUS exprDOUBLE exprINT RPAR
+   17              | LPAR • MINUS exprDOUBLE exprINT RPAR
+   18              | LPAR • MULT exprDOUBLE exprINT RPAR
+   19              | LPAR • DIV exprDOUBLE exprINT RPAR
+   20 exprERRORCOMP: LPAR • EQUALS exprINT exprDOUBLE RPAR
+   21              | LPAR • EQUALS exprDOUBLE exprINT RPAR
+   25 expr: LPAR • BIND VARIABLE exprVALUE RPAR
+   26     | LPAR • TEST exprCOMPARISON RPAR
+   27     | LPAR • DEFFACTS NAME exprEVENTS RPAR
+   28     | LPAR • DEFRULE NAME exprEVENTS LPAR TEST exprCOMPARISON RPAR ARROW LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR RPAR
+   29     | LPAR • PRINTOUT LPAR exprGROUPS RPAR RPAR
+   39 exprINT: LPAR • PLUS exprINT exprINT RPAR
+   40        | LPAR • MINUS exprINT exprINT RPAR
+   41        | LPAR • MULT exprINT exprINT RPAR
+   42        | LPAR • DIV exprINT exprINT RPAR
+   45 exprDOUBLE: LPAR • PLUS exprDOUBLE exprDOUBLE RPAR
+   46           | LPAR • MINUS exprDOUBLE exprDOUBLE RPAR
+   47           | LPAR • MULT exprDOUBLE exprDOUBLE RPAR
+   48           | LPAR • DIV exprDOUBLE exprDOUBLE RPAR
+   49           | LPAR • PLUS exprINT exprDOUBLE RPAR
+   50           | LPAR • PLUS exprDOUBLE exprINT RPAR
+   51           | LPAR • MINUS exprINT exprDOUBLE RPAR
+   52           | LPAR • MINUS exprDOUBLE exprINT RPAR
+   53           | LPAR • MULT exprINT exprDOUBLE RPAR
+   54           | LPAR • MULT exprDOUBLE exprINT RPAR
+   55           | LPAR • DIV exprINT exprDOUBLE RPAR
+   56           | LPAR • DIV exprDOUBLE exprINT RPAR
+   57 exprCOMPARISON: LPAR • EQUALS exprINT exprINT RPAR
+   58               | LPAR • EQUALS exprDOUBLE exprDOUBLE RPAR
+   59               | LPAR • EQUALS VARIABLE exprINT RPAR
+   60               | LPAR • EQUALS exprINT VARIABLE RPAR
+   61               | LPAR • EQUALS VARIABLE VARIABLE RPAR
+   64 exprEVENT: LPAR • exprELEMENTS exprELEMENTS RPAR
 
-    $default  reduce using rule 54 (exprTEST)
+    INTCONST  shift, and go to state 21
+    DOUBLE    shift, and go to state 22
+    VARIABLE  shift, and go to state 23
+    STRING    shift, and go to state 24
+    NAME      shift, and go to state 25
+    BIND      shift, and go to state 26
+    TEST      shift, and go to state 27
+    DEFFACTS  shift, and go to state 28
+    DEFRULE   shift, and go to state 29
+    PRINTOUT  shift, and go to state 30
+    PLUS      shift, and go to state 31
+    MINUS     shift, and go to state 32
+    MULT      shift, and go to state 33
+    DIV       shift, and go to state 34
+    EQUALS    shift, and go to state 35
+
+    INTCONST  [reduce using rule 68 (exprELEMENTS)]
+    DOUBLE    [reduce using rule 68 (exprELEMENTS)]
+    VARIABLE  [reduce using rule 68 (exprELEMENTS)]
+    STRING    [reduce using rule 68 (exprELEMENTS)]
+    NAME      [reduce using rule 68 (exprELEMENTS)]
+    $default  reduce using rule 68 (exprELEMENTS)
+
+    exprELEMENTS  go to state 36
 
 
 State 10
 
-   65 exprDEFFACTS: DEFFACTS •
+    3 line: NEWLINE •
 
-    $default  reduce using rule 65 (exprDEFFACTS)
+    $default  reduce using rule 3 (line)
 
 
 State 11
 
-   66 exprDEFRULE: DEFRULE •
+    2 program: program line •
 
-    $default  reduce using rule 66 (exprDEFRULE)
+    $default  reduce using rule 2 (program)
 
 
 State 12
 
-   67 exprPRINTOUT: PRINTOUT •
+    4 line: exprERRORCALC •
 
-    $default  reduce using rule 67 (exprPRINTOUT)
+    $default  reduce using rule 4 (line)
 
 
 State 13
 
-   31 exprDOUBLE: PLUS • exprDOUBLE exprDOUBLE
-   32           | PLUS • exprINT exprDOUBLE
-   33           | PLUS • exprDOUBLE exprINT
+    5 line: exprERRORCOMP •
 
-    DOUBLE  shift, and go to state 4
-    PLUS    shift, and go to state 13
-    MINUS   shift, and go to state 14
-    MULT    shift, and go to state 15
-    DIV     shift, and go to state 16
-    LPAR    shift, and go to state 29
-
-    exprINT     go to state 30
-    exprDOUBLE  go to state 31
+    $default  reduce using rule 5 (line)
 
 
 State 14
 
-   34 exprDOUBLE: MINUS • exprDOUBLE exprDOUBLE
-   35           | MINUS • exprINT exprDOUBLE
-   36           | MINUS • exprDOUBLE exprINT
+    6 line: expr • NEWLINE
 
-    DOUBLE  shift, and go to state 4
-    PLUS    shift, and go to state 13
-    MINUS   shift, and go to state 14
-    MULT    shift, and go to state 15
-    DIV     shift, and go to state 16
-    LPAR    shift, and go to state 29
-
-    exprINT     go to state 32
-    exprDOUBLE  go to state 33
+    NEWLINE  shift, and go to state 37
 
 
 State 15
 
-   37 exprDOUBLE: MULT • exprDOUBLE exprDOUBLE
-   38           | MULT • exprINT exprDOUBLE
-   39           | MULT • exprDOUBLE exprINT
+    7 line: exprINT • NEWLINE
 
-    DOUBLE  shift, and go to state 4
-    PLUS    shift, and go to state 13
-    MINUS   shift, and go to state 14
-    MULT    shift, and go to state 15
-    DIV     shift, and go to state 16
-    LPAR    shift, and go to state 29
-
-    exprINT     go to state 34
-    exprDOUBLE  go to state 35
+    NEWLINE  shift, and go to state 38
 
 
 State 16
 
-   40 exprDOUBLE: DIV • exprDOUBLE exprDOUBLE
-   41           | DIV • exprINT exprDOUBLE
-   42           | DIV • exprDOUBLE exprINT
+    8 line: exprDOUBLE • NEWLINE
 
-    DOUBLE  shift, and go to state 4
-    PLUS    shift, and go to state 13
-    MINUS   shift, and go to state 14
-    MULT    shift, and go to state 15
-    DIV     shift, and go to state 16
-    LPAR    shift, and go to state 29
-
-    exprINT     go to state 36
-    exprDOUBLE  go to state 37
+    NEWLINE  shift, and go to state 39
 
 
 State 17
 
-   13 exprINT: LPAR • PLUS INTCONST INTCONST RPAR
-   14        | LPAR • PLUS VARIABLE INTCONST RPAR
-   15        | LPAR • PLUS INTCONST VARIABLE RPAR
-   16        | LPAR • PLUS VARIABLE VARIABLE RPAR
-   17        | LPAR • PLUS exprINT INTCONST RPAR
-   18        | LPAR • MINUS INTCONST INTCONST RPAR
-   19        | LPAR • MINUS VARIABLE INTCONST RPAR
-   20        | LPAR • MINUS INTCONST VARIABLE RPAR
-   21        | LPAR • MINUS VARIABLE VARIABLE RPAR
-   22        | LPAR • MULT INTCONST INTCONST RPAR
-   23        | LPAR • MULT VARIABLE INTCONST RPAR
-   24        | LPAR • MULT INTCONST VARIABLE RPAR
-   25        | LPAR • MULT VARIABLE VARIABLE RPAR
-   26        | LPAR • DIV INTCONST INTCONST RPAR
-   27        | LPAR • DIV VARIABLE INTCONST RPAR
-   28        | LPAR • DIV INTCONST VARIABLE RPAR
-   29        | LPAR • DIV VARIABLE VARIABLE RPAR
-   43 exprEQUALS: LPAR • EQUALS VARIABLE INTCONST RPAR
-   44           | LPAR • EQUALS INTCONST VARIABLE RPAR
-   45           | LPAR • EQUALS VARIABLE exprINT RPAR
-   46           | LPAR • EQUALS exprINT VARIABLE RPAR
-   47           | LPAR • EQUALS INTCONST exprINT RPAR
-   48           | LPAR • EQUALS exprINT INTCONST RPAR
-   50 exprBIND: LPAR • exprBIND VARIABLE INTCONST RPAR
-   51         | LPAR • exprBIND VARIABLE LPAR exprINT RPAR RPAR
-   52         | LPAR • exprBIND VARIABLE LPAR exprDOUBLE RPAR RPAR
-   53         | LPAR • exprBIND VARIABLE LPAR READ RPAR RPAR
-   55 exprTEST: LPAR • exprTEST LPAR exprEQUALS RPAR RPAR
-   56         | LPAR • exprTEST LPAR EQUALS VARIABLE INTCONST RPAR RPAR
-   57         | LPAR • exprTEST LPAR EQUALS INTCONST VARIABLE RPAR RPAR
-   58         | LPAR • exprTEST LPAR EQUALS DOUBLE VARIABLE RPAR RPAR
-   59         | LPAR • exprTEST LPAR EQUALS VARIABLE DOUBLE RPAR RPAR
-   60         | LPAR • exprTEST LPAR EQUALS VARIABLE VARIABLE RPAR RPAR
-   64 exprEVENT: LPAR • exprEVENTS RPAR
+    9 line: exprCOMPARISON • NEWLINE
 
-    INTCONST  shift, and go to state 38
-    NAME      shift, and go to state 39
-    BIND      shift, and go to state 8
-    TEST      shift, and go to state 9
-    PLUS      shift, and go to state 40
-    MINUS     shift, and go to state 41
-    MULT      shift, and go to state 42
-    DIV       shift, and go to state 43
-    EQUALS    shift, and go to state 44
-    LPAR      shift, and go to state 45
-
-    exprBIND    go to state 46
-    exprTEST    go to state 47
-    exprEVENTS  go to state 48
-    exprEVENT   go to state 49
+    NEWLINE  shift, and go to state 40
 
 
 State 18
 
-    8 program: program exprINT • NEWLINE
+   10 line: exprEVENTS • NEWLINE
 
-    NEWLINE  shift, and go to state 50
+    NEWLINE  shift, and go to state 41
 
 
 State 19
 
-    9 program: program exprDOUBLE • NEWLINE
+   63 exprEVENTS: exprEVENT • exprEVENTS
 
-    NEWLINE  shift, and go to state 51
+    LPAR  shift, and go to state 42
+
+    LPAR      [reduce using rule 62 (exprEVENTS)]
+    $default  reduce using rule 62 (exprEVENTS)
+
+    exprEVENTS  go to state 43
+    exprEVENT   go to state 19
 
 
 State 20
 
-   10 program: program exprEQUALS • NEWLINE
+   11 line: error NEWLINE •
 
-    NEWLINE  shift, and go to state 52
+    $default  reduce using rule 11 (line)
 
 
 State 21
 
-    2 program: program exprBIND • NEWLINE
+   70 exprELEMENTS: INTCONST • exprELEMENTS
 
-    NEWLINE  shift, and go to state 53
+    INTCONST  shift, and go to state 21
+    DOUBLE    shift, and go to state 22
+    VARIABLE  shift, and go to state 23
+    STRING    shift, and go to state 24
+    NAME      shift, and go to state 25
+
+    INTCONST  [reduce using rule 68 (exprELEMENTS)]
+    DOUBLE    [reduce using rule 68 (exprELEMENTS)]
+    VARIABLE  [reduce using rule 68 (exprELEMENTS)]
+    STRING    [reduce using rule 68 (exprELEMENTS)]
+    NAME      [reduce using rule 68 (exprELEMENTS)]
+    $default  reduce using rule 68 (exprELEMENTS)
+
+    exprELEMENTS  go to state 44
 
 
 State 22
 
-    3 program: program exprTEST • NEWLINE
+   71 exprELEMENTS: DOUBLE • exprELEMENTS
 
-    NEWLINE  shift, and go to state 54
+    INTCONST  shift, and go to state 21
+    DOUBLE    shift, and go to state 22
+    VARIABLE  shift, and go to state 23
+    STRING    shift, and go to state 24
+    NAME      shift, and go to state 25
+
+    INTCONST  [reduce using rule 68 (exprELEMENTS)]
+    DOUBLE    [reduce using rule 68 (exprELEMENTS)]
+    VARIABLE  [reduce using rule 68 (exprELEMENTS)]
+    STRING    [reduce using rule 68 (exprELEMENTS)]
+    NAME      [reduce using rule 68 (exprELEMENTS)]
+    $default  reduce using rule 68 (exprELEMENTS)
+
+    exprELEMENTS  go to state 45
 
 
 State 23
 
-    4 program: program exprEVENT • NEWLINE
+   73 exprELEMENTS: VARIABLE • exprELEMENTS
 
-    NEWLINE  shift, and go to state 55
+    INTCONST  shift, and go to state 21
+    DOUBLE    shift, and go to state 22
+    VARIABLE  shift, and go to state 23
+    STRING    shift, and go to state 24
+    NAME      shift, and go to state 25
+
+    INTCONST  [reduce using rule 68 (exprELEMENTS)]
+    DOUBLE    [reduce using rule 68 (exprELEMENTS)]
+    VARIABLE  [reduce using rule 68 (exprELEMENTS)]
+    STRING    [reduce using rule 68 (exprELEMENTS)]
+    NAME      [reduce using rule 68 (exprELEMENTS)]
+    $default  reduce using rule 68 (exprELEMENTS)
+
+    exprELEMENTS  go to state 46
 
 
 State 24
 
-    5 program: program exprDEFFACTS • NEWLINE
+   72 exprELEMENTS: STRING • exprELEMENTS
 
-    NEWLINE  shift, and go to state 56
+    INTCONST  shift, and go to state 21
+    DOUBLE    shift, and go to state 22
+    VARIABLE  shift, and go to state 23
+    STRING    shift, and go to state 24
+    NAME      shift, and go to state 25
+
+    INTCONST  [reduce using rule 68 (exprELEMENTS)]
+    DOUBLE    [reduce using rule 68 (exprELEMENTS)]
+    VARIABLE  [reduce using rule 68 (exprELEMENTS)]
+    STRING    [reduce using rule 68 (exprELEMENTS)]
+    NAME      [reduce using rule 68 (exprELEMENTS)]
+    $default  reduce using rule 68 (exprELEMENTS)
+
+    exprELEMENTS  go to state 47
 
 
 State 25
 
-    6 program: program exprDEFRULE • NEWLINE
+   69 exprELEMENTS: NAME • exprELEMENTS
 
-    NEWLINE  shift, and go to state 57
+    INTCONST  shift, and go to state 21
+    DOUBLE    shift, and go to state 22
+    VARIABLE  shift, and go to state 23
+    STRING    shift, and go to state 24
+    NAME      shift, and go to state 25
+
+    INTCONST  [reduce using rule 68 (exprELEMENTS)]
+    DOUBLE    [reduce using rule 68 (exprELEMENTS)]
+    VARIABLE  [reduce using rule 68 (exprELEMENTS)]
+    STRING    [reduce using rule 68 (exprELEMENTS)]
+    NAME      [reduce using rule 68 (exprELEMENTS)]
+    $default  reduce using rule 68 (exprELEMENTS)
+
+    exprELEMENTS  go to state 48
 
 
 State 26
 
-    7 program: program exprPRINTOUT • NEWLINE
+   25 expr: LPAR BIND • VARIABLE exprVALUE RPAR
 
-    NEWLINE  shift, and go to state 58
+    VARIABLE  shift, and go to state 49
 
 
 State 27
 
-    1 program: program expr • NEWLINE
+   26 expr: LPAR TEST • exprCOMPARISON RPAR
 
-    NEWLINE  shift, and go to state 59
+    LPAR  shift, and go to state 50
+
+    exprCOMPARISON  go to state 51
 
 
 State 28
 
-   11 program: program error NEWLINE •
+   27 expr: LPAR DEFFACTS • NAME exprEVENTS RPAR
 
-    $default  reduce using rule 11 (program)
+    NAME  shift, and go to state 52
 
 
 State 29
 
-   13 exprINT: LPAR • PLUS INTCONST INTCONST RPAR
-   14        | LPAR • PLUS VARIABLE INTCONST RPAR
-   15        | LPAR • PLUS INTCONST VARIABLE RPAR
-   16        | LPAR • PLUS VARIABLE VARIABLE RPAR
-   17        | LPAR • PLUS exprINT INTCONST RPAR
-   18        | LPAR • MINUS INTCONST INTCONST RPAR
-   19        | LPAR • MINUS VARIABLE INTCONST RPAR
-   20        | LPAR • MINUS INTCONST VARIABLE RPAR
-   21        | LPAR • MINUS VARIABLE VARIABLE RPAR
-   22        | LPAR • MULT INTCONST INTCONST RPAR
-   23        | LPAR • MULT VARIABLE INTCONST RPAR
-   24        | LPAR • MULT INTCONST VARIABLE RPAR
-   25        | LPAR • MULT VARIABLE VARIABLE RPAR
-   26        | LPAR • DIV INTCONST INTCONST RPAR
-   27        | LPAR • DIV VARIABLE INTCONST RPAR
-   28        | LPAR • DIV INTCONST VARIABLE RPAR
-   29        | LPAR • DIV VARIABLE VARIABLE RPAR
+   28 expr: LPAR DEFRULE • NAME exprEVENTS LPAR TEST exprCOMPARISON RPAR ARROW LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR RPAR
 
-    PLUS   shift, and go to state 40
-    MINUS  shift, and go to state 41
-    MULT   shift, and go to state 42
-    DIV    shift, and go to state 43
+    NAME  shift, and go to state 53
 
 
 State 30
 
-   32 exprDOUBLE: PLUS exprINT • exprDOUBLE
+   29 expr: LPAR PRINTOUT • LPAR exprGROUPS RPAR RPAR
 
-    DOUBLE  shift, and go to state 4
-    PLUS    shift, and go to state 13
-    MINUS   shift, and go to state 14
-    MULT    shift, and go to state 15
-    DIV     shift, and go to state 16
-
-    exprDOUBLE  go to state 60
+    LPAR  shift, and go to state 54
 
 
 State 31
 
-   31 exprDOUBLE: PLUS exprDOUBLE • exprDOUBLE
-   33           | PLUS exprDOUBLE • exprINT
+   12 exprERRORCALC: LPAR PLUS • exprINT exprDOUBLE RPAR
+   16              | LPAR PLUS • exprDOUBLE exprINT RPAR
+   39 exprINT: LPAR PLUS • exprINT exprINT RPAR
+   45 exprDOUBLE: LPAR PLUS • exprDOUBLE exprDOUBLE RPAR
+   49           | LPAR PLUS • exprINT exprDOUBLE RPAR
+   50           | LPAR PLUS • exprDOUBLE exprINT RPAR
 
-    DOUBLE  shift, and go to state 4
-    PLUS    shift, and go to state 13
-    MINUS   shift, and go to state 14
-    MULT    shift, and go to state 15
-    DIV     shift, and go to state 16
-    LPAR    shift, and go to state 29
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 57
+    exprDOUBLE  go to state 58
+
+
+State 32
+
+   13 exprERRORCALC: LPAR MINUS • exprINT exprDOUBLE RPAR
+   17              | LPAR MINUS • exprDOUBLE exprINT RPAR
+   40 exprINT: LPAR MINUS • exprINT exprINT RPAR
+   46 exprDOUBLE: LPAR MINUS • exprDOUBLE exprDOUBLE RPAR
+   51           | LPAR MINUS • exprINT exprDOUBLE RPAR
+   52           | LPAR MINUS • exprDOUBLE exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 59
+    exprDOUBLE  go to state 60
+
+
+State 33
+
+   14 exprERRORCALC: LPAR MULT • exprINT exprDOUBLE RPAR
+   18              | LPAR MULT • exprDOUBLE exprINT RPAR
+   41 exprINT: LPAR MULT • exprINT exprINT RPAR
+   47 exprDOUBLE: LPAR MULT • exprDOUBLE exprDOUBLE RPAR
+   53           | LPAR MULT • exprINT exprDOUBLE RPAR
+   54           | LPAR MULT • exprDOUBLE exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
 
     exprINT     go to state 61
     exprDOUBLE  go to state 62
 
 
-State 32
-
-   35 exprDOUBLE: MINUS exprINT • exprDOUBLE
-
-    DOUBLE  shift, and go to state 4
-    PLUS    shift, and go to state 13
-    MINUS   shift, and go to state 14
-    MULT    shift, and go to state 15
-    DIV     shift, and go to state 16
-
-    exprDOUBLE  go to state 63
-
-
-State 33
-
-   34 exprDOUBLE: MINUS exprDOUBLE • exprDOUBLE
-   36           | MINUS exprDOUBLE • exprINT
-
-    DOUBLE  shift, and go to state 4
-    PLUS    shift, and go to state 13
-    MINUS   shift, and go to state 14
-    MULT    shift, and go to state 15
-    DIV     shift, and go to state 16
-    LPAR    shift, and go to state 29
-
-    exprINT     go to state 64
-    exprDOUBLE  go to state 65
-
-
 State 34
 
-   38 exprDOUBLE: MULT exprINT • exprDOUBLE
+   15 exprERRORCALC: LPAR DIV • exprINT exprDOUBLE RPAR
+   19              | LPAR DIV • exprDOUBLE exprINT RPAR
+   42 exprINT: LPAR DIV • exprINT exprINT RPAR
+   48 exprDOUBLE: LPAR DIV • exprDOUBLE exprDOUBLE RPAR
+   55           | LPAR DIV • exprINT exprDOUBLE RPAR
+   56           | LPAR DIV • exprDOUBLE exprINT RPAR
 
-    DOUBLE  shift, and go to state 4
-    PLUS    shift, and go to state 13
-    MINUS   shift, and go to state 14
-    MULT    shift, and go to state 15
-    DIV     shift, and go to state 16
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
 
-    exprDOUBLE  go to state 66
+    exprINT     go to state 63
+    exprDOUBLE  go to state 64
 
 
 State 35
 
-   37 exprDOUBLE: MULT exprDOUBLE • exprDOUBLE
-   39           | MULT exprDOUBLE • exprINT
+   20 exprERRORCOMP: LPAR EQUALS • exprINT exprDOUBLE RPAR
+   21              | LPAR EQUALS • exprDOUBLE exprINT RPAR
+   57 exprCOMPARISON: LPAR EQUALS • exprINT exprINT RPAR
+   58               | LPAR EQUALS • exprDOUBLE exprDOUBLE RPAR
+   59               | LPAR EQUALS • VARIABLE exprINT RPAR
+   60               | LPAR EQUALS • exprINT VARIABLE RPAR
+   61               | LPAR EQUALS • VARIABLE VARIABLE RPAR
 
-    DOUBLE  shift, and go to state 4
-    PLUS    shift, and go to state 13
-    MINUS   shift, and go to state 14
-    MULT    shift, and go to state 15
-    DIV     shift, and go to state 16
-    LPAR    shift, and go to state 29
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 65
+    LPAR      shift, and go to state 56
 
-    exprINT     go to state 67
-    exprDOUBLE  go to state 68
+    exprINT     go to state 66
+    exprDOUBLE  go to state 67
 
 
 State 36
 
-   41 exprDOUBLE: DIV exprINT • exprDOUBLE
+   64 exprEVENT: LPAR exprELEMENTS • exprELEMENTS RPAR
 
-    DOUBLE  shift, and go to state 4
-    PLUS    shift, and go to state 13
-    MINUS   shift, and go to state 14
-    MULT    shift, and go to state 15
-    DIV     shift, and go to state 16
+    INTCONST  shift, and go to state 21
+    DOUBLE    shift, and go to state 22
+    VARIABLE  shift, and go to state 23
+    STRING    shift, and go to state 24
+    NAME      shift, and go to state 25
 
-    exprDOUBLE  go to state 69
+    $default  reduce using rule 68 (exprELEMENTS)
+
+    exprELEMENTS  go to state 68
 
 
 State 37
 
-   40 exprDOUBLE: DIV exprDOUBLE • exprDOUBLE
-   42           | DIV exprDOUBLE • exprINT
+    6 line: expr NEWLINE •
 
-    DOUBLE  shift, and go to state 4
-    PLUS    shift, and go to state 13
-    MINUS   shift, and go to state 14
-    MULT    shift, and go to state 15
-    DIV     shift, and go to state 16
-    LPAR    shift, and go to state 29
-
-    exprINT     go to state 70
-    exprDOUBLE  go to state 71
+    $default  reduce using rule 6 (line)
 
 
 State 38
 
-   62 exprEVENTS: INTCONST •
+    7 line: exprINT NEWLINE •
 
-    $default  reduce using rule 62 (exprEVENTS)
+    $default  reduce using rule 7 (line)
 
 
 State 39
 
-   61 exprEVENTS: NAME •
+    8 line: exprDOUBLE NEWLINE •
 
-    $default  reduce using rule 61 (exprEVENTS)
+    $default  reduce using rule 8 (line)
 
 
 State 40
 
-   13 exprINT: LPAR PLUS • INTCONST INTCONST RPAR
-   14        | LPAR PLUS • VARIABLE INTCONST RPAR
-   15        | LPAR PLUS • INTCONST VARIABLE RPAR
-   16        | LPAR PLUS • VARIABLE VARIABLE RPAR
-   17        | LPAR PLUS • exprINT INTCONST RPAR
+    9 line: exprCOMPARISON NEWLINE •
 
-    INTCONST  shift, and go to state 72
-    VARIABLE  shift, and go to state 73
-    LPAR      shift, and go to state 29
-
-    exprINT  go to state 74
+    $default  reduce using rule 9 (line)
 
 
 State 41
 
-   18 exprINT: LPAR MINUS • INTCONST INTCONST RPAR
-   19        | LPAR MINUS • VARIABLE INTCONST RPAR
-   20        | LPAR MINUS • INTCONST VARIABLE RPAR
-   21        | LPAR MINUS • VARIABLE VARIABLE RPAR
+   10 line: exprEVENTS NEWLINE •
 
-    INTCONST  shift, and go to state 75
-    VARIABLE  shift, and go to state 76
+    $default  reduce using rule 10 (line)
 
 
 State 42
 
-   22 exprINT: LPAR MULT • INTCONST INTCONST RPAR
-   23        | LPAR MULT • VARIABLE INTCONST RPAR
-   24        | LPAR MULT • INTCONST VARIABLE RPAR
-   25        | LPAR MULT • VARIABLE VARIABLE RPAR
+   64 exprEVENT: LPAR • exprELEMENTS exprELEMENTS RPAR
 
-    INTCONST  shift, and go to state 77
-    VARIABLE  shift, and go to state 78
+    INTCONST  shift, and go to state 21
+    DOUBLE    shift, and go to state 22
+    VARIABLE  shift, and go to state 23
+    STRING    shift, and go to state 24
+    NAME      shift, and go to state 25
+
+    INTCONST  [reduce using rule 68 (exprELEMENTS)]
+    DOUBLE    [reduce using rule 68 (exprELEMENTS)]
+    VARIABLE  [reduce using rule 68 (exprELEMENTS)]
+    STRING    [reduce using rule 68 (exprELEMENTS)]
+    NAME      [reduce using rule 68 (exprELEMENTS)]
+    $default  reduce using rule 68 (exprELEMENTS)
+
+    exprELEMENTS  go to state 36
 
 
 State 43
-
-   26 exprINT: LPAR DIV • INTCONST INTCONST RPAR
-   27        | LPAR DIV • VARIABLE INTCONST RPAR
-   28        | LPAR DIV • INTCONST VARIABLE RPAR
-   29        | LPAR DIV • VARIABLE VARIABLE RPAR
-
-    INTCONST  shift, and go to state 79
-    VARIABLE  shift, and go to state 80
-
-
-State 44
-
-   43 exprEQUALS: LPAR EQUALS • VARIABLE INTCONST RPAR
-   44           | LPAR EQUALS • INTCONST VARIABLE RPAR
-   45           | LPAR EQUALS • VARIABLE exprINT RPAR
-   46           | LPAR EQUALS • exprINT VARIABLE RPAR
-   47           | LPAR EQUALS • INTCONST exprINT RPAR
-   48           | LPAR EQUALS • exprINT INTCONST RPAR
-
-    INTCONST  shift, and go to state 81
-    VARIABLE  shift, and go to state 82
-    LPAR      shift, and go to state 29
-
-    exprINT  go to state 83
-
-
-State 45
-
-   50 exprBIND: LPAR • exprBIND VARIABLE INTCONST RPAR
-   51         | LPAR • exprBIND VARIABLE LPAR exprINT RPAR RPAR
-   52         | LPAR • exprBIND VARIABLE LPAR exprDOUBLE RPAR RPAR
-   53         | LPAR • exprBIND VARIABLE LPAR READ RPAR RPAR
-   55 exprTEST: LPAR • exprTEST LPAR exprEQUALS RPAR RPAR
-   56         | LPAR • exprTEST LPAR EQUALS VARIABLE INTCONST RPAR RPAR
-   57         | LPAR • exprTEST LPAR EQUALS INTCONST VARIABLE RPAR RPAR
-   58         | LPAR • exprTEST LPAR EQUALS DOUBLE VARIABLE RPAR RPAR
-   59         | LPAR • exprTEST LPAR EQUALS VARIABLE DOUBLE RPAR RPAR
-   60         | LPAR • exprTEST LPAR EQUALS VARIABLE VARIABLE RPAR RPAR
-   64 exprEVENT: LPAR • exprEVENTS RPAR
-
-    INTCONST  shift, and go to state 38
-    NAME      shift, and go to state 39
-    BIND      shift, and go to state 8
-    TEST      shift, and go to state 9
-    LPAR      shift, and go to state 45
-
-    exprBIND    go to state 46
-    exprTEST    go to state 47
-    exprEVENTS  go to state 48
-    exprEVENT   go to state 49
-
-
-State 46
-
-   50 exprBIND: LPAR exprBIND • VARIABLE INTCONST RPAR
-   51         | LPAR exprBIND • VARIABLE LPAR exprINT RPAR RPAR
-   52         | LPAR exprBIND • VARIABLE LPAR exprDOUBLE RPAR RPAR
-   53         | LPAR exprBIND • VARIABLE LPAR READ RPAR RPAR
-
-    VARIABLE  shift, and go to state 84
-
-
-State 47
-
-   55 exprTEST: LPAR exprTEST • LPAR exprEQUALS RPAR RPAR
-   56         | LPAR exprTEST • LPAR EQUALS VARIABLE INTCONST RPAR RPAR
-   57         | LPAR exprTEST • LPAR EQUALS INTCONST VARIABLE RPAR RPAR
-   58         | LPAR exprTEST • LPAR EQUALS DOUBLE VARIABLE RPAR RPAR
-   59         | LPAR exprTEST • LPAR EQUALS VARIABLE DOUBLE RPAR RPAR
-   60         | LPAR exprTEST • LPAR EQUALS VARIABLE VARIABLE RPAR RPAR
-
-    LPAR  shift, and go to state 85
-
-
-State 48
-
-   64 exprEVENT: LPAR exprEVENTS • RPAR
-
-    RPAR  shift, and go to state 86
-
-
-State 49
-
-   63 exprEVENTS: exprEVENT • exprEVENTS
-
-    INTCONST  shift, and go to state 38
-    NAME      shift, and go to state 39
-    LPAR      shift, and go to state 87
-
-    exprEVENTS  go to state 88
-    exprEVENT   go to state 49
-
-
-State 50
-
-    8 program: program exprINT NEWLINE •
-
-    $default  reduce using rule 8 (program)
-
-
-State 51
-
-    9 program: program exprDOUBLE NEWLINE •
-
-    $default  reduce using rule 9 (program)
-
-
-State 52
-
-   10 program: program exprEQUALS NEWLINE •
-
-    $default  reduce using rule 10 (program)
-
-
-State 53
-
-    2 program: program exprBIND NEWLINE •
-
-    $default  reduce using rule 2 (program)
-
-
-State 54
-
-    3 program: program exprTEST NEWLINE •
-
-    $default  reduce using rule 3 (program)
-
-
-State 55
-
-    4 program: program exprEVENT NEWLINE •
-
-    $default  reduce using rule 4 (program)
-
-
-State 56
-
-    5 program: program exprDEFFACTS NEWLINE •
-
-    $default  reduce using rule 5 (program)
-
-
-State 57
-
-    6 program: program exprDEFRULE NEWLINE •
-
-    $default  reduce using rule 6 (program)
-
-
-State 58
-
-    7 program: program exprPRINTOUT NEWLINE •
-
-    $default  reduce using rule 7 (program)
-
-
-State 59
-
-    1 program: program expr NEWLINE •
-
-    $default  reduce using rule 1 (program)
-
-
-State 60
-
-   32 exprDOUBLE: PLUS exprINT exprDOUBLE •
-
-    $default  reduce using rule 32 (exprDOUBLE)
-
-
-State 61
-
-   33 exprDOUBLE: PLUS exprDOUBLE exprINT •
-
-    $default  reduce using rule 33 (exprDOUBLE)
-
-
-State 62
-
-   31 exprDOUBLE: PLUS exprDOUBLE exprDOUBLE •
-
-    $default  reduce using rule 31 (exprDOUBLE)
-
-
-State 63
-
-   35 exprDOUBLE: MINUS exprINT exprDOUBLE •
-
-    $default  reduce using rule 35 (exprDOUBLE)
-
-
-State 64
-
-   36 exprDOUBLE: MINUS exprDOUBLE exprINT •
-
-    $default  reduce using rule 36 (exprDOUBLE)
-
-
-State 65
-
-   34 exprDOUBLE: MINUS exprDOUBLE exprDOUBLE •
-
-    $default  reduce using rule 34 (exprDOUBLE)
-
-
-State 66
-
-   38 exprDOUBLE: MULT exprINT exprDOUBLE •
-
-    $default  reduce using rule 38 (exprDOUBLE)
-
-
-State 67
-
-   39 exprDOUBLE: MULT exprDOUBLE exprINT •
-
-    $default  reduce using rule 39 (exprDOUBLE)
-
-
-State 68
-
-   37 exprDOUBLE: MULT exprDOUBLE exprDOUBLE •
-
-    $default  reduce using rule 37 (exprDOUBLE)
-
-
-State 69
-
-   41 exprDOUBLE: DIV exprINT exprDOUBLE •
-
-    $default  reduce using rule 41 (exprDOUBLE)
-
-
-State 70
-
-   42 exprDOUBLE: DIV exprDOUBLE exprINT •
-
-    $default  reduce using rule 42 (exprDOUBLE)
-
-
-State 71
-
-   40 exprDOUBLE: DIV exprDOUBLE exprDOUBLE •
-
-    $default  reduce using rule 40 (exprDOUBLE)
-
-
-State 72
-
-   13 exprINT: LPAR PLUS INTCONST • INTCONST RPAR
-   15        | LPAR PLUS INTCONST • VARIABLE RPAR
-
-    INTCONST  shift, and go to state 89
-    VARIABLE  shift, and go to state 90
-
-
-State 73
-
-   14 exprINT: LPAR PLUS VARIABLE • INTCONST RPAR
-   16        | LPAR PLUS VARIABLE • VARIABLE RPAR
-
-    INTCONST  shift, and go to state 91
-    VARIABLE  shift, and go to state 92
-
-
-State 74
-
-   17 exprINT: LPAR PLUS exprINT • INTCONST RPAR
-
-    INTCONST  shift, and go to state 93
-
-
-State 75
-
-   18 exprINT: LPAR MINUS INTCONST • INTCONST RPAR
-   20        | LPAR MINUS INTCONST • VARIABLE RPAR
-
-    INTCONST  shift, and go to state 94
-    VARIABLE  shift, and go to state 95
-
-
-State 76
-
-   19 exprINT: LPAR MINUS VARIABLE • INTCONST RPAR
-   21        | LPAR MINUS VARIABLE • VARIABLE RPAR
-
-    INTCONST  shift, and go to state 96
-    VARIABLE  shift, and go to state 97
-
-
-State 77
-
-   22 exprINT: LPAR MULT INTCONST • INTCONST RPAR
-   24        | LPAR MULT INTCONST • VARIABLE RPAR
-
-    INTCONST  shift, and go to state 98
-    VARIABLE  shift, and go to state 99
-
-
-State 78
-
-   23 exprINT: LPAR MULT VARIABLE • INTCONST RPAR
-   25        | LPAR MULT VARIABLE • VARIABLE RPAR
-
-    INTCONST  shift, and go to state 100
-    VARIABLE  shift, and go to state 101
-
-
-State 79
-
-   26 exprINT: LPAR DIV INTCONST • INTCONST RPAR
-   28        | LPAR DIV INTCONST • VARIABLE RPAR
-
-    INTCONST  shift, and go to state 102
-    VARIABLE  shift, and go to state 103
-
-
-State 80
-
-   27 exprINT: LPAR DIV VARIABLE • INTCONST RPAR
-   29        | LPAR DIV VARIABLE • VARIABLE RPAR
-
-    INTCONST  shift, and go to state 104
-    VARIABLE  shift, and go to state 105
-
-
-State 81
-
-   44 exprEQUALS: LPAR EQUALS INTCONST • VARIABLE RPAR
-   47           | LPAR EQUALS INTCONST • exprINT RPAR
-
-    VARIABLE  shift, and go to state 106
-    LPAR      shift, and go to state 29
-
-    exprINT  go to state 107
-
-
-State 82
-
-   43 exprEQUALS: LPAR EQUALS VARIABLE • INTCONST RPAR
-   45           | LPAR EQUALS VARIABLE • exprINT RPAR
-
-    INTCONST  shift, and go to state 108
-    LPAR      shift, and go to state 29
-
-    exprINT  go to state 109
-
-
-State 83
-
-   46 exprEQUALS: LPAR EQUALS exprINT • VARIABLE RPAR
-   48           | LPAR EQUALS exprINT • INTCONST RPAR
-
-    INTCONST  shift, and go to state 110
-    VARIABLE  shift, and go to state 111
-
-
-State 84
-
-   50 exprBIND: LPAR exprBIND VARIABLE • INTCONST RPAR
-   51         | LPAR exprBIND VARIABLE • LPAR exprINT RPAR RPAR
-   52         | LPAR exprBIND VARIABLE • LPAR exprDOUBLE RPAR RPAR
-   53         | LPAR exprBIND VARIABLE • LPAR READ RPAR RPAR
-
-    INTCONST  shift, and go to state 112
-    LPAR      shift, and go to state 113
-
-
-State 85
-
-   55 exprTEST: LPAR exprTEST LPAR • exprEQUALS RPAR RPAR
-   56         | LPAR exprTEST LPAR • EQUALS VARIABLE INTCONST RPAR RPAR
-   57         | LPAR exprTEST LPAR • EQUALS INTCONST VARIABLE RPAR RPAR
-   58         | LPAR exprTEST LPAR • EQUALS DOUBLE VARIABLE RPAR RPAR
-   59         | LPAR exprTEST LPAR • EQUALS VARIABLE DOUBLE RPAR RPAR
-   60         | LPAR exprTEST LPAR • EQUALS VARIABLE VARIABLE RPAR RPAR
-
-    EQUALS  shift, and go to state 114
-    LPAR    shift, and go to state 115
-
-    exprEQUALS  go to state 116
-
-
-State 86
-
-   64 exprEVENT: LPAR exprEVENTS RPAR •
-
-    $default  reduce using rule 64 (exprEVENT)
-
-
-State 87
-
-   64 exprEVENT: LPAR • exprEVENTS RPAR
-
-    INTCONST  shift, and go to state 38
-    NAME      shift, and go to state 39
-    LPAR      shift, and go to state 87
-
-    exprEVENTS  go to state 48
-    exprEVENT   go to state 49
-
-
-State 88
 
    63 exprEVENTS: exprEVENT exprEVENTS •
 
     $default  reduce using rule 63 (exprEVENTS)
 
 
-State 89
+State 44
 
-   13 exprINT: LPAR PLUS INTCONST INTCONST • RPAR
+   70 exprELEMENTS: INTCONST exprELEMENTS •
+
+    $default  reduce using rule 70 (exprELEMENTS)
+
+
+State 45
+
+   71 exprELEMENTS: DOUBLE exprELEMENTS •
+
+    $default  reduce using rule 71 (exprELEMENTS)
+
+
+State 46
+
+   73 exprELEMENTS: VARIABLE exprELEMENTS •
+
+    $default  reduce using rule 73 (exprELEMENTS)
+
+
+State 47
+
+   72 exprELEMENTS: STRING exprELEMENTS •
+
+    $default  reduce using rule 72 (exprELEMENTS)
+
+
+State 48
+
+   69 exprELEMENTS: NAME exprELEMENTS •
+
+    $default  reduce using rule 69 (exprELEMENTS)
+
+
+State 49
+
+   25 expr: LPAR BIND VARIABLE • exprVALUE RPAR
+
+    INTCONST  shift, and go to state 69
+    DOUBLE    shift, and go to state 70
+    VARIABLE  shift, and go to state 55
+    STRING    shift, and go to state 71
+    LPAR      shift, and go to state 72
+
+    exprVALUE       go to state 73
+    exprINT         go to state 74
+    exprDOUBLE      go to state 75
+    exprCOMPARISON  go to state 76
+
+
+State 50
+
+   57 exprCOMPARISON: LPAR • EQUALS exprINT exprINT RPAR
+   58               | LPAR • EQUALS exprDOUBLE exprDOUBLE RPAR
+   59               | LPAR • EQUALS VARIABLE exprINT RPAR
+   60               | LPAR • EQUALS exprINT VARIABLE RPAR
+   61               | LPAR • EQUALS VARIABLE VARIABLE RPAR
+
+    EQUALS  shift, and go to state 77
+
+
+State 51
+
+   26 expr: LPAR TEST exprCOMPARISON • RPAR
+
+    RPAR  shift, and go to state 78
+
+
+State 52
+
+   27 expr: LPAR DEFFACTS NAME • exprEVENTS RPAR
+
+    LPAR  shift, and go to state 42
+
+    $default  reduce using rule 62 (exprEVENTS)
+
+    exprEVENTS  go to state 79
+    exprEVENT   go to state 19
+
+
+State 53
+
+   28 expr: LPAR DEFRULE NAME • exprEVENTS LPAR TEST exprCOMPARISON RPAR ARROW LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR RPAR
+
+    LPAR  shift, and go to state 42
+
+    LPAR  [reduce using rule 62 (exprEVENTS)]
+
+    exprEVENTS  go to state 80
+    exprEVENT   go to state 19
+
+
+State 54
+
+   29 expr: LPAR PRINTOUT LPAR • exprGROUPS RPAR RPAR
+
+    LPAR  shift, and go to state 81
+
+    $default  reduce using rule 65 (exprGROUPS)
+
+    exprGROUPS  go to state 82
+    exprGROUP   go to state 83
+
+
+State 55
+
+   38 exprINT: VARIABLE •
+   44 exprDOUBLE: VARIABLE •
+
+    INTCONST  reduce using rule 38 (exprINT)
+    INTCONST  [reduce using rule 44 (exprDOUBLE)]
+    DOUBLE    reduce using rule 38 (exprINT)
+    DOUBLE    [reduce using rule 44 (exprDOUBLE)]
+    VARIABLE  reduce using rule 38 (exprINT)
+    VARIABLE  [reduce using rule 44 (exprDOUBLE)]
+    LPAR      reduce using rule 38 (exprINT)
+    LPAR      [reduce using rule 44 (exprDOUBLE)]
+    RPAR      reduce using rule 38 (exprINT)
+    RPAR      [reduce using rule 44 (exprDOUBLE)]
+    $default  reduce using rule 38 (exprINT)
+
+
+State 56
+
+   39 exprINT: LPAR • PLUS exprINT exprINT RPAR
+   40        | LPAR • MINUS exprINT exprINT RPAR
+   41        | LPAR • MULT exprINT exprINT RPAR
+   42        | LPAR • DIV exprINT exprINT RPAR
+   45 exprDOUBLE: LPAR • PLUS exprDOUBLE exprDOUBLE RPAR
+   46           | LPAR • MINUS exprDOUBLE exprDOUBLE RPAR
+   47           | LPAR • MULT exprDOUBLE exprDOUBLE RPAR
+   48           | LPAR • DIV exprDOUBLE exprDOUBLE RPAR
+   49           | LPAR • PLUS exprINT exprDOUBLE RPAR
+   50           | LPAR • PLUS exprDOUBLE exprINT RPAR
+   51           | LPAR • MINUS exprINT exprDOUBLE RPAR
+   52           | LPAR • MINUS exprDOUBLE exprINT RPAR
+   53           | LPAR • MULT exprINT exprDOUBLE RPAR
+   54           | LPAR • MULT exprDOUBLE exprINT RPAR
+   55           | LPAR • DIV exprINT exprDOUBLE RPAR
+   56           | LPAR • DIV exprDOUBLE exprINT RPAR
+
+    PLUS   shift, and go to state 84
+    MINUS  shift, and go to state 85
+    MULT   shift, and go to state 86
+    DIV    shift, and go to state 87
+
+
+State 57
+
+   12 exprERRORCALC: LPAR PLUS exprINT • exprDOUBLE RPAR
+   39 exprINT: LPAR PLUS exprINT • exprINT RPAR
+   49 exprDOUBLE: LPAR PLUS exprINT • exprDOUBLE RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 88
+    exprDOUBLE  go to state 89
+
+
+State 58
+
+   16 exprERRORCALC: LPAR PLUS exprDOUBLE • exprINT RPAR
+   45 exprDOUBLE: LPAR PLUS exprDOUBLE • exprDOUBLE RPAR
+   50           | LPAR PLUS exprDOUBLE • exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 90
+    exprDOUBLE  go to state 91
+
+
+State 59
+
+   13 exprERRORCALC: LPAR MINUS exprINT • exprDOUBLE RPAR
+   40 exprINT: LPAR MINUS exprINT • exprINT RPAR
+   51 exprDOUBLE: LPAR MINUS exprINT • exprDOUBLE RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 92
+    exprDOUBLE  go to state 93
+
+
+State 60
+
+   17 exprERRORCALC: LPAR MINUS exprDOUBLE • exprINT RPAR
+   46 exprDOUBLE: LPAR MINUS exprDOUBLE • exprDOUBLE RPAR
+   52           | LPAR MINUS exprDOUBLE • exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 94
+    exprDOUBLE  go to state 95
+
+
+State 61
+
+   14 exprERRORCALC: LPAR MULT exprINT • exprDOUBLE RPAR
+   41 exprINT: LPAR MULT exprINT • exprINT RPAR
+   53 exprDOUBLE: LPAR MULT exprINT • exprDOUBLE RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 96
+    exprDOUBLE  go to state 97
+
+
+State 62
+
+   18 exprERRORCALC: LPAR MULT exprDOUBLE • exprINT RPAR
+   47 exprDOUBLE: LPAR MULT exprDOUBLE • exprDOUBLE RPAR
+   54           | LPAR MULT exprDOUBLE • exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 98
+    exprDOUBLE  go to state 99
+
+
+State 63
+
+   15 exprERRORCALC: LPAR DIV exprINT • exprDOUBLE RPAR
+   42 exprINT: LPAR DIV exprINT • exprINT RPAR
+   55 exprDOUBLE: LPAR DIV exprINT • exprDOUBLE RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 100
+    exprDOUBLE  go to state 101
+
+
+State 64
+
+   19 exprERRORCALC: LPAR DIV exprDOUBLE • exprINT RPAR
+   48 exprDOUBLE: LPAR DIV exprDOUBLE • exprDOUBLE RPAR
+   56           | LPAR DIV exprDOUBLE • exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 102
+    exprDOUBLE  go to state 103
+
+
+State 65
+
+   38 exprINT: VARIABLE •
+   44 exprDOUBLE: VARIABLE •
+   59 exprCOMPARISON: LPAR EQUALS VARIABLE • exprINT RPAR
+   61               | LPAR EQUALS VARIABLE • VARIABLE RPAR
+
+    INTCONST  shift, and go to state 4
+    VARIABLE  shift, and go to state 104
+    LPAR      shift, and go to state 105
+
+    INTCONST  [reduce using rule 38 (exprINT)]
+    INTCONST  [reduce using rule 44 (exprDOUBLE)]
+    DOUBLE    reduce using rule 38 (exprINT)
+    DOUBLE    [reduce using rule 44 (exprDOUBLE)]
+    VARIABLE  [reduce using rule 38 (exprINT)]
+    VARIABLE  [reduce using rule 44 (exprDOUBLE)]
+    LPAR      [reduce using rule 38 (exprINT)]
+    LPAR      [reduce using rule 44 (exprDOUBLE)]
+    $default  reduce using rule 38 (exprINT)
+
+    exprINT  go to state 106
+
+
+State 66
+
+   20 exprERRORCOMP: LPAR EQUALS exprINT • exprDOUBLE RPAR
+   57 exprCOMPARISON: LPAR EQUALS exprINT • exprINT RPAR
+   60               | LPAR EQUALS exprINT • VARIABLE RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 107
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 108
+    exprDOUBLE  go to state 109
+
+
+State 67
+
+   21 exprERRORCOMP: LPAR EQUALS exprDOUBLE • exprINT RPAR
+   58 exprCOMPARISON: LPAR EQUALS exprDOUBLE • exprDOUBLE RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 110
+    exprDOUBLE  go to state 111
+
+
+State 68
+
+   64 exprEVENT: LPAR exprELEMENTS exprELEMENTS • RPAR
+
+    RPAR  shift, and go to state 112
+
+
+State 69
+
+   30 exprVALUE: INTCONST •
+   37 exprINT: INTCONST •
+
+    RPAR      reduce using rule 30 (exprVALUE)
+    RPAR      [reduce using rule 37 (exprINT)]
+    $default  reduce using rule 30 (exprVALUE)
+
+
+State 70
+
+   31 exprVALUE: DOUBLE •
+   43 exprDOUBLE: DOUBLE •
+
+    RPAR      reduce using rule 31 (exprVALUE)
+    RPAR      [reduce using rule 43 (exprDOUBLE)]
+    $default  reduce using rule 31 (exprVALUE)
+
+
+State 71
+
+   32 exprVALUE: STRING •
+
+    $default  reduce using rule 32 (exprVALUE)
+
+
+State 72
+
+   33 exprVALUE: LPAR • READ RPAR
+   39 exprINT: LPAR • PLUS exprINT exprINT RPAR
+   40        | LPAR • MINUS exprINT exprINT RPAR
+   41        | LPAR • MULT exprINT exprINT RPAR
+   42        | LPAR • DIV exprINT exprINT RPAR
+   45 exprDOUBLE: LPAR • PLUS exprDOUBLE exprDOUBLE RPAR
+   46           | LPAR • MINUS exprDOUBLE exprDOUBLE RPAR
+   47           | LPAR • MULT exprDOUBLE exprDOUBLE RPAR
+   48           | LPAR • DIV exprDOUBLE exprDOUBLE RPAR
+   49           | LPAR • PLUS exprINT exprDOUBLE RPAR
+   50           | LPAR • PLUS exprDOUBLE exprINT RPAR
+   51           | LPAR • MINUS exprINT exprDOUBLE RPAR
+   52           | LPAR • MINUS exprDOUBLE exprINT RPAR
+   53           | LPAR • MULT exprINT exprDOUBLE RPAR
+   54           | LPAR • MULT exprDOUBLE exprINT RPAR
+   55           | LPAR • DIV exprINT exprDOUBLE RPAR
+   56           | LPAR • DIV exprDOUBLE exprINT RPAR
+   57 exprCOMPARISON: LPAR • EQUALS exprINT exprINT RPAR
+   58               | LPAR • EQUALS exprDOUBLE exprDOUBLE RPAR
+   59               | LPAR • EQUALS VARIABLE exprINT RPAR
+   60               | LPAR • EQUALS exprINT VARIABLE RPAR
+   61               | LPAR • EQUALS VARIABLE VARIABLE RPAR
+
+    READ    shift, and go to state 113
+    PLUS    shift, and go to state 84
+    MINUS   shift, and go to state 85
+    MULT    shift, and go to state 86
+    DIV     shift, and go to state 87
+    EQUALS  shift, and go to state 77
+
+
+State 73
+
+   25 expr: LPAR BIND VARIABLE exprVALUE • RPAR
+
+    RPAR  shift, and go to state 114
+
+
+State 74
+
+   34 exprVALUE: exprINT •
+
+    $default  reduce using rule 34 (exprVALUE)
+
+
+State 75
+
+   35 exprVALUE: exprDOUBLE •
+
+    $default  reduce using rule 35 (exprVALUE)
+
+
+State 76
+
+   36 exprVALUE: exprCOMPARISON •
+
+    $default  reduce using rule 36 (exprVALUE)
+
+
+State 77
+
+   57 exprCOMPARISON: LPAR EQUALS • exprINT exprINT RPAR
+   58               | LPAR EQUALS • exprDOUBLE exprDOUBLE RPAR
+   59               | LPAR EQUALS • VARIABLE exprINT RPAR
+   60               | LPAR EQUALS • exprINT VARIABLE RPAR
+   61               | LPAR EQUALS • VARIABLE VARIABLE RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 65
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 115
+    exprDOUBLE  go to state 116
+
+
+State 78
+
+   26 expr: LPAR TEST exprCOMPARISON RPAR •
+
+    $default  reduce using rule 26 (expr)
+
+
+State 79
+
+   27 expr: LPAR DEFFACTS NAME exprEVENTS • RPAR
 
     RPAR  shift, and go to state 117
 
 
-State 90
+State 80
 
-   15 exprINT: LPAR PLUS INTCONST VARIABLE • RPAR
+   28 expr: LPAR DEFRULE NAME exprEVENTS • LPAR TEST exprCOMPARISON RPAR ARROW LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR RPAR
 
-    RPAR  shift, and go to state 118
-
-
-State 91
-
-   14 exprINT: LPAR PLUS VARIABLE INTCONST • RPAR
-
-    RPAR  shift, and go to state 119
+    LPAR  shift, and go to state 118
 
 
-State 92
+State 81
 
-   16 exprINT: LPAR PLUS VARIABLE VARIABLE • RPAR
+   67 exprGROUP: LPAR • exprELEMENTS RPAR
+
+    INTCONST  shift, and go to state 21
+    DOUBLE    shift, and go to state 22
+    VARIABLE  shift, and go to state 23
+    STRING    shift, and go to state 24
+    NAME      shift, and go to state 25
+
+    $default  reduce using rule 68 (exprELEMENTS)
+
+    exprELEMENTS  go to state 119
+
+
+State 82
+
+   29 expr: LPAR PRINTOUT LPAR exprGROUPS • RPAR RPAR
 
     RPAR  shift, and go to state 120
 
 
-State 93
+State 83
 
-   17 exprINT: LPAR PLUS exprINT INTCONST • RPAR
+   66 exprGROUPS: exprGROUP • exprGROUPS
 
-    RPAR  shift, and go to state 121
+    LPAR  shift, and go to state 81
 
+    $default  reduce using rule 65 (exprGROUPS)
 
-State 94
-
-   18 exprINT: LPAR MINUS INTCONST INTCONST • RPAR
-
-    RPAR  shift, and go to state 122
+    exprGROUPS  go to state 121
+    exprGROUP   go to state 83
 
 
-State 95
+State 84
 
-   20 exprINT: LPAR MINUS INTCONST VARIABLE • RPAR
+   39 exprINT: LPAR PLUS • exprINT exprINT RPAR
+   45 exprDOUBLE: LPAR PLUS • exprDOUBLE exprDOUBLE RPAR
+   49           | LPAR PLUS • exprINT exprDOUBLE RPAR
+   50           | LPAR PLUS • exprDOUBLE exprINT RPAR
 
-    RPAR  shift, and go to state 123
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
 
-
-State 96
-
-   19 exprINT: LPAR MINUS VARIABLE INTCONST • RPAR
-
-    RPAR  shift, and go to state 124
-
-
-State 97
-
-   21 exprINT: LPAR MINUS VARIABLE VARIABLE • RPAR
-
-    RPAR  shift, and go to state 125
+    exprINT     go to state 122
+    exprDOUBLE  go to state 123
 
 
-State 98
+State 85
 
-   22 exprINT: LPAR MULT INTCONST INTCONST • RPAR
+   40 exprINT: LPAR MINUS • exprINT exprINT RPAR
+   46 exprDOUBLE: LPAR MINUS • exprDOUBLE exprDOUBLE RPAR
+   51           | LPAR MINUS • exprINT exprDOUBLE RPAR
+   52           | LPAR MINUS • exprDOUBLE exprINT RPAR
 
-    RPAR  shift, and go to state 126
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
 
-
-State 99
-
-   24 exprINT: LPAR MULT INTCONST VARIABLE • RPAR
-
-    RPAR  shift, and go to state 127
-
-
-State 100
-
-   23 exprINT: LPAR MULT VARIABLE INTCONST • RPAR
-
-    RPAR  shift, and go to state 128
+    exprINT     go to state 124
+    exprDOUBLE  go to state 125
 
 
-State 101
+State 86
 
-   25 exprINT: LPAR MULT VARIABLE VARIABLE • RPAR
+   41 exprINT: LPAR MULT • exprINT exprINT RPAR
+   47 exprDOUBLE: LPAR MULT • exprDOUBLE exprDOUBLE RPAR
+   53           | LPAR MULT • exprINT exprDOUBLE RPAR
+   54           | LPAR MULT • exprDOUBLE exprINT RPAR
 
-    RPAR  shift, and go to state 129
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 126
+    exprDOUBLE  go to state 127
 
 
-State 102
+State 87
 
-   26 exprINT: LPAR DIV INTCONST INTCONST • RPAR
+   42 exprINT: LPAR DIV • exprINT exprINT RPAR
+   48 exprDOUBLE: LPAR DIV • exprDOUBLE exprDOUBLE RPAR
+   55           | LPAR DIV • exprINT exprDOUBLE RPAR
+   56           | LPAR DIV • exprDOUBLE exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 128
+    exprDOUBLE  go to state 129
+
+
+State 88
+
+   39 exprINT: LPAR PLUS exprINT exprINT • RPAR
 
     RPAR  shift, and go to state 130
 
 
-State 103
+State 89
 
-   28 exprINT: LPAR DIV INTCONST VARIABLE • RPAR
+   12 exprERRORCALC: LPAR PLUS exprINT exprDOUBLE • RPAR
+   49 exprDOUBLE: LPAR PLUS exprINT exprDOUBLE • RPAR
 
     RPAR  shift, and go to state 131
 
 
-State 104
+State 90
 
-   27 exprINT: LPAR DIV VARIABLE INTCONST • RPAR
+   16 exprERRORCALC: LPAR PLUS exprDOUBLE exprINT • RPAR
+   50 exprDOUBLE: LPAR PLUS exprDOUBLE exprINT • RPAR
 
     RPAR  shift, and go to state 132
 
 
-State 105
+State 91
 
-   29 exprINT: LPAR DIV VARIABLE VARIABLE • RPAR
+   45 exprDOUBLE: LPAR PLUS exprDOUBLE exprDOUBLE • RPAR
 
     RPAR  shift, and go to state 133
 
 
-State 106
+State 92
 
-   44 exprEQUALS: LPAR EQUALS INTCONST VARIABLE • RPAR
+   40 exprINT: LPAR MINUS exprINT exprINT • RPAR
 
     RPAR  shift, and go to state 134
 
 
-State 107
+State 93
 
-   47 exprEQUALS: LPAR EQUALS INTCONST exprINT • RPAR
+   13 exprERRORCALC: LPAR MINUS exprINT exprDOUBLE • RPAR
+   51 exprDOUBLE: LPAR MINUS exprINT exprDOUBLE • RPAR
 
     RPAR  shift, and go to state 135
 
 
-State 108
+State 94
 
-   43 exprEQUALS: LPAR EQUALS VARIABLE INTCONST • RPAR
+   17 exprERRORCALC: LPAR MINUS exprDOUBLE exprINT • RPAR
+   52 exprDOUBLE: LPAR MINUS exprDOUBLE exprINT • RPAR
 
     RPAR  shift, and go to state 136
 
 
-State 109
+State 95
 
-   45 exprEQUALS: LPAR EQUALS VARIABLE exprINT • RPAR
+   46 exprDOUBLE: LPAR MINUS exprDOUBLE exprDOUBLE • RPAR
 
     RPAR  shift, and go to state 137
 
 
-State 110
+State 96
 
-   48 exprEQUALS: LPAR EQUALS exprINT INTCONST • RPAR
+   41 exprINT: LPAR MULT exprINT exprINT • RPAR
 
     RPAR  shift, and go to state 138
 
 
-State 111
+State 97
 
-   46 exprEQUALS: LPAR EQUALS exprINT VARIABLE • RPAR
+   14 exprERRORCALC: LPAR MULT exprINT exprDOUBLE • RPAR
+   53 exprDOUBLE: LPAR MULT exprINT exprDOUBLE • RPAR
 
     RPAR  shift, and go to state 139
 
 
-State 112
+State 98
 
-   50 exprBIND: LPAR exprBIND VARIABLE INTCONST • RPAR
+   18 exprERRORCALC: LPAR MULT exprDOUBLE exprINT • RPAR
+   54 exprDOUBLE: LPAR MULT exprDOUBLE exprINT • RPAR
 
     RPAR  shift, and go to state 140
 
 
-State 113
+State 99
 
-   51 exprBIND: LPAR exprBIND VARIABLE LPAR • exprINT RPAR RPAR
-   52         | LPAR exprBIND VARIABLE LPAR • exprDOUBLE RPAR RPAR
-   53         | LPAR exprBIND VARIABLE LPAR • READ RPAR RPAR
+   47 exprDOUBLE: LPAR MULT exprDOUBLE exprDOUBLE • RPAR
 
-    DOUBLE  shift, and go to state 4
-    READ    shift, and go to state 141
-    PLUS    shift, and go to state 13
-    MINUS   shift, and go to state 14
-    MULT    shift, and go to state 15
-    DIV     shift, and go to state 16
-    LPAR    shift, and go to state 29
+    RPAR  shift, and go to state 141
 
-    exprINT     go to state 142
-    exprDOUBLE  go to state 143
 
+State 100
 
-State 114
+   42 exprINT: LPAR DIV exprINT exprINT • RPAR
 
-   56 exprTEST: LPAR exprTEST LPAR EQUALS • VARIABLE INTCONST RPAR RPAR
-   57         | LPAR exprTEST LPAR EQUALS • INTCONST VARIABLE RPAR RPAR
-   58         | LPAR exprTEST LPAR EQUALS • DOUBLE VARIABLE RPAR RPAR
-   59         | LPAR exprTEST LPAR EQUALS • VARIABLE DOUBLE RPAR RPAR
-   60         | LPAR exprTEST LPAR EQUALS • VARIABLE VARIABLE RPAR RPAR
+    RPAR  shift, and go to state 142
 
-    INTCONST  shift, and go to state 144
-    DOUBLE    shift, and go to state 145
-    VARIABLE  shift, and go to state 146
 
+State 101
 
-State 115
+   15 exprERRORCALC: LPAR DIV exprINT exprDOUBLE • RPAR
+   55 exprDOUBLE: LPAR DIV exprINT exprDOUBLE • RPAR
 
-   43 exprEQUALS: LPAR • EQUALS VARIABLE INTCONST RPAR
-   44           | LPAR • EQUALS INTCONST VARIABLE RPAR
-   45           | LPAR • EQUALS VARIABLE exprINT RPAR
-   46           | LPAR • EQUALS exprINT VARIABLE RPAR
-   47           | LPAR • EQUALS INTCONST exprINT RPAR
-   48           | LPAR • EQUALS exprINT INTCONST RPAR
+    RPAR  shift, and go to state 143
 
-    EQUALS  shift, and go to state 44
 
+State 102
 
-State 116
+   19 exprERRORCALC: LPAR DIV exprDOUBLE exprINT • RPAR
+   56 exprDOUBLE: LPAR DIV exprDOUBLE exprINT • RPAR
 
-   55 exprTEST: LPAR exprTEST LPAR exprEQUALS • RPAR RPAR
+    RPAR  shift, and go to state 144
 
-    RPAR  shift, and go to state 147
 
+State 103
 
-State 117
+   48 exprDOUBLE: LPAR DIV exprDOUBLE exprDOUBLE • RPAR
 
-   13 exprINT: LPAR PLUS INTCONST INTCONST RPAR •
+    RPAR  shift, and go to state 145
 
-    $default  reduce using rule 13 (exprINT)
 
+State 104
 
-State 118
+   38 exprINT: VARIABLE •
+   61 exprCOMPARISON: LPAR EQUALS VARIABLE VARIABLE • RPAR
 
-   15 exprINT: LPAR PLUS INTCONST VARIABLE RPAR •
+    RPAR  shift, and go to state 146
 
-    $default  reduce using rule 15 (exprINT)
+    RPAR  [reduce using rule 38 (exprINT)]
 
 
-State 119
+State 105
 
-   14 exprINT: LPAR PLUS VARIABLE INTCONST RPAR •
+   39 exprINT: LPAR • PLUS exprINT exprINT RPAR
+   40        | LPAR • MINUS exprINT exprINT RPAR
+   41        | LPAR • MULT exprINT exprINT RPAR
+   42        | LPAR • DIV exprINT exprINT RPAR
 
-    $default  reduce using rule 14 (exprINT)
+    PLUS   shift, and go to state 147
+    MINUS  shift, and go to state 148
+    MULT   shift, and go to state 149
+    DIV    shift, and go to state 150
 
 
-State 120
+State 106
 
-   16 exprINT: LPAR PLUS VARIABLE VARIABLE RPAR •
+   59 exprCOMPARISON: LPAR EQUALS VARIABLE exprINT • RPAR
 
-    $default  reduce using rule 16 (exprINT)
+    RPAR  shift, and go to state 151
 
 
-State 121
+State 107
 
-   17 exprINT: LPAR PLUS exprINT INTCONST RPAR •
+   38 exprINT: VARIABLE •
+   44 exprDOUBLE: VARIABLE •
+   60 exprCOMPARISON: LPAR EQUALS exprINT VARIABLE • RPAR
 
-    $default  reduce using rule 17 (exprINT)
+    RPAR  shift, and go to state 152
 
+    RPAR  [reduce using rule 38 (exprINT)]
+    RPAR  [reduce using rule 44 (exprDOUBLE)]
 
-State 122
 
-   18 exprINT: LPAR MINUS INTCONST INTCONST RPAR •
+State 108
 
-    $default  reduce using rule 18 (exprINT)
+   57 exprCOMPARISON: LPAR EQUALS exprINT exprINT • RPAR
 
+    RPAR  shift, and go to state 153
 
-State 123
 
-   20 exprINT: LPAR MINUS INTCONST VARIABLE RPAR •
+State 109
 
-    $default  reduce using rule 20 (exprINT)
+   20 exprERRORCOMP: LPAR EQUALS exprINT exprDOUBLE • RPAR
 
+    RPAR  shift, and go to state 154
 
-State 124
 
-   19 exprINT: LPAR MINUS VARIABLE INTCONST RPAR •
+State 110
 
-    $default  reduce using rule 19 (exprINT)
+   21 exprERRORCOMP: LPAR EQUALS exprDOUBLE exprINT • RPAR
 
+    RPAR  shift, and go to state 155
 
-State 125
 
-   21 exprINT: LPAR MINUS VARIABLE VARIABLE RPAR •
+State 111
 
-    $default  reduce using rule 21 (exprINT)
-
-
-State 126
-
-   22 exprINT: LPAR MULT INTCONST INTCONST RPAR •
-
-    $default  reduce using rule 22 (exprINT)
-
-
-State 127
-
-   24 exprINT: LPAR MULT INTCONST VARIABLE RPAR •
-
-    $default  reduce using rule 24 (exprINT)
-
-
-State 128
-
-   23 exprINT: LPAR MULT VARIABLE INTCONST RPAR •
-
-    $default  reduce using rule 23 (exprINT)
-
-
-State 129
-
-   25 exprINT: LPAR MULT VARIABLE VARIABLE RPAR •
-
-    $default  reduce using rule 25 (exprINT)
-
-
-State 130
-
-   26 exprINT: LPAR DIV INTCONST INTCONST RPAR •
-
-    $default  reduce using rule 26 (exprINT)
-
-
-State 131
-
-   28 exprINT: LPAR DIV INTCONST VARIABLE RPAR •
-
-    $default  reduce using rule 28 (exprINT)
-
-
-State 132
-
-   27 exprINT: LPAR DIV VARIABLE INTCONST RPAR •
-
-    $default  reduce using rule 27 (exprINT)
-
-
-State 133
-
-   29 exprINT: LPAR DIV VARIABLE VARIABLE RPAR •
-
-    $default  reduce using rule 29 (exprINT)
-
-
-State 134
-
-   44 exprEQUALS: LPAR EQUALS INTCONST VARIABLE RPAR •
-
-    $default  reduce using rule 44 (exprEQUALS)
-
-
-State 135
-
-   47 exprEQUALS: LPAR EQUALS INTCONST exprINT RPAR •
-
-    $default  reduce using rule 47 (exprEQUALS)
-
-
-State 136
-
-   43 exprEQUALS: LPAR EQUALS VARIABLE INTCONST RPAR •
-
-    $default  reduce using rule 43 (exprEQUALS)
-
-
-State 137
-
-   45 exprEQUALS: LPAR EQUALS VARIABLE exprINT RPAR •
-
-    $default  reduce using rule 45 (exprEQUALS)
-
-
-State 138
-
-   48 exprEQUALS: LPAR EQUALS exprINT INTCONST RPAR •
-
-    $default  reduce using rule 48 (exprEQUALS)
-
-
-State 139
-
-   46 exprEQUALS: LPAR EQUALS exprINT VARIABLE RPAR •
-
-    $default  reduce using rule 46 (exprEQUALS)
-
-
-State 140
-
-   50 exprBIND: LPAR exprBIND VARIABLE INTCONST RPAR •
-
-    $default  reduce using rule 50 (exprBIND)
-
-
-State 141
-
-   53 exprBIND: LPAR exprBIND VARIABLE LPAR READ • RPAR RPAR
-
-    RPAR  shift, and go to state 148
-
-
-State 142
-
-   51 exprBIND: LPAR exprBIND VARIABLE LPAR exprINT • RPAR RPAR
-
-    RPAR  shift, and go to state 149
-
-
-State 143
-
-   52 exprBIND: LPAR exprBIND VARIABLE LPAR exprDOUBLE • RPAR RPAR
-
-    RPAR  shift, and go to state 150
-
-
-State 144
-
-   57 exprTEST: LPAR exprTEST LPAR EQUALS INTCONST • VARIABLE RPAR RPAR
-
-    VARIABLE  shift, and go to state 151
-
-
-State 145
-
-   58 exprTEST: LPAR exprTEST LPAR EQUALS DOUBLE • VARIABLE RPAR RPAR
-
-    VARIABLE  shift, and go to state 152
-
-
-State 146
-
-   56 exprTEST: LPAR exprTEST LPAR EQUALS VARIABLE • INTCONST RPAR RPAR
-   59         | LPAR exprTEST LPAR EQUALS VARIABLE • DOUBLE RPAR RPAR
-   60         | LPAR exprTEST LPAR EQUALS VARIABLE • VARIABLE RPAR RPAR
-
-    INTCONST  shift, and go to state 153
-    DOUBLE    shift, and go to state 154
-    VARIABLE  shift, and go to state 155
-
-
-State 147
-
-   55 exprTEST: LPAR exprTEST LPAR exprEQUALS RPAR • RPAR
+   58 exprCOMPARISON: LPAR EQUALS exprDOUBLE exprDOUBLE • RPAR
 
     RPAR  shift, and go to state 156
 
 
-State 148
+State 112
 
-   53 exprBIND: LPAR exprBIND VARIABLE LPAR READ RPAR • RPAR
+   64 exprEVENT: LPAR exprELEMENTS exprELEMENTS RPAR •
+
+    $default  reduce using rule 64 (exprEVENT)
+
+
+State 113
+
+   33 exprVALUE: LPAR READ • RPAR
 
     RPAR  shift, and go to state 157
 
 
-State 149
+State 114
 
-   51 exprBIND: LPAR exprBIND VARIABLE LPAR exprINT RPAR • RPAR
+   25 expr: LPAR BIND VARIABLE exprVALUE RPAR •
 
-    RPAR  shift, and go to state 158
-
-
-State 150
-
-   52 exprBIND: LPAR exprBIND VARIABLE LPAR exprDOUBLE RPAR • RPAR
-
-    RPAR  shift, and go to state 159
+    $default  reduce using rule 25 (expr)
 
 
-State 151
+State 115
 
-   57 exprTEST: LPAR exprTEST LPAR EQUALS INTCONST VARIABLE • RPAR RPAR
+   57 exprCOMPARISON: LPAR EQUALS exprINT • exprINT RPAR
+   60               | LPAR EQUALS exprINT • VARIABLE RPAR
 
-    RPAR  shift, and go to state 160
+    INTCONST  shift, and go to state 4
+    VARIABLE  shift, and go to state 158
+    LPAR      shift, and go to state 105
 
-
-State 152
-
-   58 exprTEST: LPAR exprTEST LPAR EQUALS DOUBLE VARIABLE • RPAR RPAR
-
-    RPAR  shift, and go to state 161
+    exprINT  go to state 108
 
 
-State 153
+State 116
 
-   56 exprTEST: LPAR exprTEST LPAR EQUALS VARIABLE INTCONST • RPAR RPAR
+   58 exprCOMPARISON: LPAR EQUALS exprDOUBLE • exprDOUBLE RPAR
+
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 159
+    LPAR      shift, and go to state 160
+
+    exprDOUBLE  go to state 111
+
+
+State 117
+
+   27 expr: LPAR DEFFACTS NAME exprEVENTS RPAR •
+
+    $default  reduce using rule 27 (expr)
+
+
+State 118
+
+   28 expr: LPAR DEFRULE NAME exprEVENTS LPAR • TEST exprCOMPARISON RPAR ARROW LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR RPAR
+
+    TEST  shift, and go to state 161
+
+
+State 119
+
+   67 exprGROUP: LPAR exprELEMENTS • RPAR
 
     RPAR  shift, and go to state 162
 
 
-State 154
+State 120
 
-   59 exprTEST: LPAR exprTEST LPAR EQUALS VARIABLE DOUBLE • RPAR RPAR
+   29 expr: LPAR PRINTOUT LPAR exprGROUPS RPAR • RPAR
 
     RPAR  shift, and go to state 163
 
 
+State 121
+
+   66 exprGROUPS: exprGROUP exprGROUPS •
+
+    $default  reduce using rule 66 (exprGROUPS)
+
+
+State 122
+
+   39 exprINT: LPAR PLUS exprINT • exprINT RPAR
+   49 exprDOUBLE: LPAR PLUS exprINT • exprDOUBLE RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 88
+    exprDOUBLE  go to state 164
+
+
+State 123
+
+   45 exprDOUBLE: LPAR PLUS exprDOUBLE • exprDOUBLE RPAR
+   50           | LPAR PLUS exprDOUBLE • exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 165
+    exprDOUBLE  go to state 91
+
+
+State 124
+
+   40 exprINT: LPAR MINUS exprINT • exprINT RPAR
+   51 exprDOUBLE: LPAR MINUS exprINT • exprDOUBLE RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 92
+    exprDOUBLE  go to state 166
+
+
+State 125
+
+   46 exprDOUBLE: LPAR MINUS exprDOUBLE • exprDOUBLE RPAR
+   52           | LPAR MINUS exprDOUBLE • exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 167
+    exprDOUBLE  go to state 95
+
+
+State 126
+
+   41 exprINT: LPAR MULT exprINT • exprINT RPAR
+   53 exprDOUBLE: LPAR MULT exprINT • exprDOUBLE RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 96
+    exprDOUBLE  go to state 168
+
+
+State 127
+
+   47 exprDOUBLE: LPAR MULT exprDOUBLE • exprDOUBLE RPAR
+   54           | LPAR MULT exprDOUBLE • exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 169
+    exprDOUBLE  go to state 99
+
+
+State 128
+
+   42 exprINT: LPAR DIV exprINT • exprINT RPAR
+   55 exprDOUBLE: LPAR DIV exprINT • exprDOUBLE RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 100
+    exprDOUBLE  go to state 170
+
+
+State 129
+
+   48 exprDOUBLE: LPAR DIV exprDOUBLE • exprDOUBLE RPAR
+   56           | LPAR DIV exprDOUBLE • exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 171
+    exprDOUBLE  go to state 103
+
+
+State 130
+
+   39 exprINT: LPAR PLUS exprINT exprINT RPAR •
+
+    $default  reduce using rule 39 (exprINT)
+
+
+State 131
+
+   12 exprERRORCALC: LPAR PLUS exprINT exprDOUBLE RPAR •
+   49 exprDOUBLE: LPAR PLUS exprINT exprDOUBLE RPAR •
+
+    NEWLINE   reduce using rule 12 (exprERRORCALC)
+    NEWLINE   [reduce using rule 49 (exprDOUBLE)]
+    $default  reduce using rule 12 (exprERRORCALC)
+
+
+State 132
+
+   16 exprERRORCALC: LPAR PLUS exprDOUBLE exprINT RPAR •
+   50 exprDOUBLE: LPAR PLUS exprDOUBLE exprINT RPAR •
+
+    NEWLINE   reduce using rule 16 (exprERRORCALC)
+    NEWLINE   [reduce using rule 50 (exprDOUBLE)]
+    $default  reduce using rule 16 (exprERRORCALC)
+
+
+State 133
+
+   45 exprDOUBLE: LPAR PLUS exprDOUBLE exprDOUBLE RPAR •
+
+    $default  reduce using rule 45 (exprDOUBLE)
+
+
+State 134
+
+   40 exprINT: LPAR MINUS exprINT exprINT RPAR •
+
+    $default  reduce using rule 40 (exprINT)
+
+
+State 135
+
+   13 exprERRORCALC: LPAR MINUS exprINT exprDOUBLE RPAR •
+   51 exprDOUBLE: LPAR MINUS exprINT exprDOUBLE RPAR •
+
+    NEWLINE   reduce using rule 13 (exprERRORCALC)
+    NEWLINE   [reduce using rule 51 (exprDOUBLE)]
+    $default  reduce using rule 13 (exprERRORCALC)
+
+
+State 136
+
+   17 exprERRORCALC: LPAR MINUS exprDOUBLE exprINT RPAR •
+   52 exprDOUBLE: LPAR MINUS exprDOUBLE exprINT RPAR •
+
+    NEWLINE   reduce using rule 17 (exprERRORCALC)
+    NEWLINE   [reduce using rule 52 (exprDOUBLE)]
+    $default  reduce using rule 17 (exprERRORCALC)
+
+
+State 137
+
+   46 exprDOUBLE: LPAR MINUS exprDOUBLE exprDOUBLE RPAR •
+
+    $default  reduce using rule 46 (exprDOUBLE)
+
+
+State 138
+
+   41 exprINT: LPAR MULT exprINT exprINT RPAR •
+
+    $default  reduce using rule 41 (exprINT)
+
+
+State 139
+
+   14 exprERRORCALC: LPAR MULT exprINT exprDOUBLE RPAR •
+   53 exprDOUBLE: LPAR MULT exprINT exprDOUBLE RPAR •
+
+    NEWLINE   reduce using rule 14 (exprERRORCALC)
+    NEWLINE   [reduce using rule 53 (exprDOUBLE)]
+    $default  reduce using rule 14 (exprERRORCALC)
+
+
+State 140
+
+   18 exprERRORCALC: LPAR MULT exprDOUBLE exprINT RPAR •
+   54 exprDOUBLE: LPAR MULT exprDOUBLE exprINT RPAR •
+
+    NEWLINE   reduce using rule 18 (exprERRORCALC)
+    NEWLINE   [reduce using rule 54 (exprDOUBLE)]
+    $default  reduce using rule 18 (exprERRORCALC)
+
+
+State 141
+
+   47 exprDOUBLE: LPAR MULT exprDOUBLE exprDOUBLE RPAR •
+
+    $default  reduce using rule 47 (exprDOUBLE)
+
+
+State 142
+
+   42 exprINT: LPAR DIV exprINT exprINT RPAR •
+
+    $default  reduce using rule 42 (exprINT)
+
+
+State 143
+
+   15 exprERRORCALC: LPAR DIV exprINT exprDOUBLE RPAR •
+   55 exprDOUBLE: LPAR DIV exprINT exprDOUBLE RPAR •
+
+    NEWLINE   reduce using rule 15 (exprERRORCALC)
+    NEWLINE   [reduce using rule 55 (exprDOUBLE)]
+    $default  reduce using rule 15 (exprERRORCALC)
+
+
+State 144
+
+   19 exprERRORCALC: LPAR DIV exprDOUBLE exprINT RPAR •
+   56 exprDOUBLE: LPAR DIV exprDOUBLE exprINT RPAR •
+
+    NEWLINE   reduce using rule 19 (exprERRORCALC)
+    NEWLINE   [reduce using rule 56 (exprDOUBLE)]
+    $default  reduce using rule 19 (exprERRORCALC)
+
+
+State 145
+
+   48 exprDOUBLE: LPAR DIV exprDOUBLE exprDOUBLE RPAR •
+
+    $default  reduce using rule 48 (exprDOUBLE)
+
+
+State 146
+
+   61 exprCOMPARISON: LPAR EQUALS VARIABLE VARIABLE RPAR •
+
+    $default  reduce using rule 61 (exprCOMPARISON)
+
+
+State 147
+
+   39 exprINT: LPAR PLUS • exprINT exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    VARIABLE  shift, and go to state 172
+    LPAR      shift, and go to state 105
+
+    exprINT  go to state 173
+
+
+State 148
+
+   40 exprINT: LPAR MINUS • exprINT exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    VARIABLE  shift, and go to state 172
+    LPAR      shift, and go to state 105
+
+    exprINT  go to state 174
+
+
+State 149
+
+   41 exprINT: LPAR MULT • exprINT exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    VARIABLE  shift, and go to state 172
+    LPAR      shift, and go to state 105
+
+    exprINT  go to state 175
+
+
+State 150
+
+   42 exprINT: LPAR DIV • exprINT exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    VARIABLE  shift, and go to state 172
+    LPAR      shift, and go to state 105
+
+    exprINT  go to state 176
+
+
+State 151
+
+   59 exprCOMPARISON: LPAR EQUALS VARIABLE exprINT RPAR •
+
+    $default  reduce using rule 59 (exprCOMPARISON)
+
+
+State 152
+
+   60 exprCOMPARISON: LPAR EQUALS exprINT VARIABLE RPAR •
+
+    $default  reduce using rule 60 (exprCOMPARISON)
+
+
+State 153
+
+   57 exprCOMPARISON: LPAR EQUALS exprINT exprINT RPAR •
+
+    $default  reduce using rule 57 (exprCOMPARISON)
+
+
+State 154
+
+   20 exprERRORCOMP: LPAR EQUALS exprINT exprDOUBLE RPAR •
+
+    $default  reduce using rule 20 (exprERRORCOMP)
+
+
 State 155
 
-   60 exprTEST: LPAR exprTEST LPAR EQUALS VARIABLE VARIABLE • RPAR RPAR
+   21 exprERRORCOMP: LPAR EQUALS exprDOUBLE exprINT RPAR •
 
-    RPAR  shift, and go to state 164
+    $default  reduce using rule 21 (exprERRORCOMP)
 
 
 State 156
 
-   55 exprTEST: LPAR exprTEST LPAR exprEQUALS RPAR RPAR •
+   58 exprCOMPARISON: LPAR EQUALS exprDOUBLE exprDOUBLE RPAR •
 
-    $default  reduce using rule 55 (exprTEST)
+    $default  reduce using rule 58 (exprCOMPARISON)
 
 
 State 157
 
-   53 exprBIND: LPAR exprBIND VARIABLE LPAR READ RPAR RPAR •
+   33 exprVALUE: LPAR READ RPAR •
 
-    $default  reduce using rule 53 (exprBIND)
+    $default  reduce using rule 33 (exprVALUE)
 
 
 State 158
 
-   51 exprBIND: LPAR exprBIND VARIABLE LPAR exprINT RPAR RPAR •
+   38 exprINT: VARIABLE •
+   60 exprCOMPARISON: LPAR EQUALS exprINT VARIABLE • RPAR
 
-    $default  reduce using rule 51 (exprBIND)
+    RPAR  shift, and go to state 152
+
+    RPAR  [reduce using rule 38 (exprINT)]
 
 
 State 159
 
-   52 exprBIND: LPAR exprBIND VARIABLE LPAR exprDOUBLE RPAR RPAR •
+   44 exprDOUBLE: VARIABLE •
 
-    $default  reduce using rule 52 (exprBIND)
+    $default  reduce using rule 44 (exprDOUBLE)
 
 
 State 160
 
-   57 exprTEST: LPAR exprTEST LPAR EQUALS INTCONST VARIABLE RPAR • RPAR
+   45 exprDOUBLE: LPAR • PLUS exprDOUBLE exprDOUBLE RPAR
+   46           | LPAR • MINUS exprDOUBLE exprDOUBLE RPAR
+   47           | LPAR • MULT exprDOUBLE exprDOUBLE RPAR
+   48           | LPAR • DIV exprDOUBLE exprDOUBLE RPAR
+   49           | LPAR • PLUS exprINT exprDOUBLE RPAR
+   50           | LPAR • PLUS exprDOUBLE exprINT RPAR
+   51           | LPAR • MINUS exprINT exprDOUBLE RPAR
+   52           | LPAR • MINUS exprDOUBLE exprINT RPAR
+   53           | LPAR • MULT exprINT exprDOUBLE RPAR
+   54           | LPAR • MULT exprDOUBLE exprINT RPAR
+   55           | LPAR • DIV exprINT exprDOUBLE RPAR
+   56           | LPAR • DIV exprDOUBLE exprINT RPAR
 
-    RPAR  shift, and go to state 165
+    PLUS   shift, and go to state 177
+    MINUS  shift, and go to state 178
+    MULT   shift, and go to state 179
+    DIV    shift, and go to state 180
 
 
 State 161
 
-   58 exprTEST: LPAR exprTEST LPAR EQUALS DOUBLE VARIABLE RPAR • RPAR
+   28 expr: LPAR DEFRULE NAME exprEVENTS LPAR TEST • exprCOMPARISON RPAR ARROW LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR RPAR
 
-    RPAR  shift, and go to state 166
+    LPAR  shift, and go to state 50
+
+    exprCOMPARISON  go to state 181
 
 
 State 162
 
-   56 exprTEST: LPAR exprTEST LPAR EQUALS VARIABLE INTCONST RPAR • RPAR
+   67 exprGROUP: LPAR exprELEMENTS RPAR •
 
-    RPAR  shift, and go to state 167
+    $default  reduce using rule 67 (exprGROUP)
 
 
 State 163
 
-   59 exprTEST: LPAR exprTEST LPAR EQUALS VARIABLE DOUBLE RPAR • RPAR
+   29 expr: LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR •
 
-    RPAR  shift, and go to state 168
+    $default  reduce using rule 29 (expr)
 
 
 State 164
 
-   60 exprTEST: LPAR exprTEST LPAR EQUALS VARIABLE VARIABLE RPAR • RPAR
+   49 exprDOUBLE: LPAR PLUS exprINT exprDOUBLE • RPAR
 
-    RPAR  shift, and go to state 169
+    RPAR  shift, and go to state 182
 
 
 State 165
 
-   57 exprTEST: LPAR exprTEST LPAR EQUALS INTCONST VARIABLE RPAR RPAR •
+   50 exprDOUBLE: LPAR PLUS exprDOUBLE exprINT • RPAR
 
-    $default  reduce using rule 57 (exprTEST)
+    RPAR  shift, and go to state 183
 
 
 State 166
 
-   58 exprTEST: LPAR exprTEST LPAR EQUALS DOUBLE VARIABLE RPAR RPAR •
+   51 exprDOUBLE: LPAR MINUS exprINT exprDOUBLE • RPAR
 
-    $default  reduce using rule 58 (exprTEST)
+    RPAR  shift, and go to state 184
 
 
 State 167
 
-   56 exprTEST: LPAR exprTEST LPAR EQUALS VARIABLE INTCONST RPAR RPAR •
+   52 exprDOUBLE: LPAR MINUS exprDOUBLE exprINT • RPAR
 
-    $default  reduce using rule 56 (exprTEST)
+    RPAR  shift, and go to state 185
 
 
 State 168
 
-   59 exprTEST: LPAR exprTEST LPAR EQUALS VARIABLE DOUBLE RPAR RPAR •
+   53 exprDOUBLE: LPAR MULT exprINT exprDOUBLE • RPAR
 
-    $default  reduce using rule 59 (exprTEST)
+    RPAR  shift, and go to state 186
 
 
 State 169
 
-   60 exprTEST: LPAR exprTEST LPAR EQUALS VARIABLE VARIABLE RPAR RPAR •
+   54 exprDOUBLE: LPAR MULT exprDOUBLE exprINT • RPAR
 
-    $default  reduce using rule 60 (exprTEST)
+    RPAR  shift, and go to state 187
+
+
+State 170
+
+   55 exprDOUBLE: LPAR DIV exprINT exprDOUBLE • RPAR
+
+    RPAR  shift, and go to state 188
+
+
+State 171
+
+   56 exprDOUBLE: LPAR DIV exprDOUBLE exprINT • RPAR
+
+    RPAR  shift, and go to state 189
+
+
+State 172
+
+   38 exprINT: VARIABLE •
+
+    $default  reduce using rule 38 (exprINT)
+
+
+State 173
+
+   39 exprINT: LPAR PLUS exprINT • exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    VARIABLE  shift, and go to state 172
+    LPAR      shift, and go to state 105
+
+    exprINT  go to state 88
+
+
+State 174
+
+   40 exprINT: LPAR MINUS exprINT • exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    VARIABLE  shift, and go to state 172
+    LPAR      shift, and go to state 105
+
+    exprINT  go to state 92
+
+
+State 175
+
+   41 exprINT: LPAR MULT exprINT • exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    VARIABLE  shift, and go to state 172
+    LPAR      shift, and go to state 105
+
+    exprINT  go to state 96
+
+
+State 176
+
+   42 exprINT: LPAR DIV exprINT • exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    VARIABLE  shift, and go to state 172
+    LPAR      shift, and go to state 105
+
+    exprINT  go to state 100
+
+
+State 177
+
+   45 exprDOUBLE: LPAR PLUS • exprDOUBLE exprDOUBLE RPAR
+   49           | LPAR PLUS • exprINT exprDOUBLE RPAR
+   50           | LPAR PLUS • exprDOUBLE exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 190
+    exprDOUBLE  go to state 123
+
+
+State 178
+
+   46 exprDOUBLE: LPAR MINUS • exprDOUBLE exprDOUBLE RPAR
+   51           | LPAR MINUS • exprINT exprDOUBLE RPAR
+   52           | LPAR MINUS • exprDOUBLE exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 191
+    exprDOUBLE  go to state 125
+
+
+State 179
+
+   47 exprDOUBLE: LPAR MULT • exprDOUBLE exprDOUBLE RPAR
+   53           | LPAR MULT • exprINT exprDOUBLE RPAR
+   54           | LPAR MULT • exprDOUBLE exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 192
+    exprDOUBLE  go to state 127
+
+
+State 180
+
+   48 exprDOUBLE: LPAR DIV • exprDOUBLE exprDOUBLE RPAR
+   55           | LPAR DIV • exprINT exprDOUBLE RPAR
+   56           | LPAR DIV • exprDOUBLE exprINT RPAR
+
+    INTCONST  shift, and go to state 4
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 55
+    LPAR      shift, and go to state 56
+
+    exprINT     go to state 193
+    exprDOUBLE  go to state 129
+
+
+State 181
+
+   28 expr: LPAR DEFRULE NAME exprEVENTS LPAR TEST exprCOMPARISON • RPAR ARROW LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR RPAR
+
+    RPAR  shift, and go to state 194
+
+
+State 182
+
+   49 exprDOUBLE: LPAR PLUS exprINT exprDOUBLE RPAR •
+
+    $default  reduce using rule 49 (exprDOUBLE)
+
+
+State 183
+
+   50 exprDOUBLE: LPAR PLUS exprDOUBLE exprINT RPAR •
+
+    $default  reduce using rule 50 (exprDOUBLE)
+
+
+State 184
+
+   51 exprDOUBLE: LPAR MINUS exprINT exprDOUBLE RPAR •
+
+    $default  reduce using rule 51 (exprDOUBLE)
+
+
+State 185
+
+   52 exprDOUBLE: LPAR MINUS exprDOUBLE exprINT RPAR •
+
+    $default  reduce using rule 52 (exprDOUBLE)
+
+
+State 186
+
+   53 exprDOUBLE: LPAR MULT exprINT exprDOUBLE RPAR •
+
+    $default  reduce using rule 53 (exprDOUBLE)
+
+
+State 187
+
+   54 exprDOUBLE: LPAR MULT exprDOUBLE exprINT RPAR •
+
+    $default  reduce using rule 54 (exprDOUBLE)
+
+
+State 188
+
+   55 exprDOUBLE: LPAR DIV exprINT exprDOUBLE RPAR •
+
+    $default  reduce using rule 55 (exprDOUBLE)
+
+
+State 189
+
+   56 exprDOUBLE: LPAR DIV exprDOUBLE exprINT RPAR •
+
+    $default  reduce using rule 56 (exprDOUBLE)
+
+
+State 190
+
+   49 exprDOUBLE: LPAR PLUS exprINT • exprDOUBLE RPAR
+
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 159
+    LPAR      shift, and go to state 160
+
+    exprDOUBLE  go to state 164
+
+
+State 191
+
+   51 exprDOUBLE: LPAR MINUS exprINT • exprDOUBLE RPAR
+
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 159
+    LPAR      shift, and go to state 160
+
+    exprDOUBLE  go to state 166
+
+
+State 192
+
+   53 exprDOUBLE: LPAR MULT exprINT • exprDOUBLE RPAR
+
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 159
+    LPAR      shift, and go to state 160
+
+    exprDOUBLE  go to state 168
+
+
+State 193
+
+   55 exprDOUBLE: LPAR DIV exprINT • exprDOUBLE RPAR
+
+    DOUBLE    shift, and go to state 5
+    VARIABLE  shift, and go to state 159
+    LPAR      shift, and go to state 160
+
+    exprDOUBLE  go to state 170
+
+
+State 194
+
+   28 expr: LPAR DEFRULE NAME exprEVENTS LPAR TEST exprCOMPARISON RPAR • ARROW LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR RPAR
+
+    ARROW  shift, and go to state 195
+
+
+State 195
+
+   28 expr: LPAR DEFRULE NAME exprEVENTS LPAR TEST exprCOMPARISON RPAR ARROW • LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR RPAR
+
+    LPAR  shift, and go to state 196
+
+
+State 196
+
+   28 expr: LPAR DEFRULE NAME exprEVENTS LPAR TEST exprCOMPARISON RPAR ARROW LPAR • PRINTOUT LPAR exprGROUPS RPAR RPAR RPAR
+
+    PRINTOUT  shift, and go to state 197
+
+
+State 197
+
+   28 expr: LPAR DEFRULE NAME exprEVENTS LPAR TEST exprCOMPARISON RPAR ARROW LPAR PRINTOUT • LPAR exprGROUPS RPAR RPAR RPAR
+
+    LPAR  shift, and go to state 198
+
+
+State 198
+
+   28 expr: LPAR DEFRULE NAME exprEVENTS LPAR TEST exprCOMPARISON RPAR ARROW LPAR PRINTOUT LPAR • exprGROUPS RPAR RPAR RPAR
+
+    LPAR  shift, and go to state 81
+
+    $default  reduce using rule 65 (exprGROUPS)
+
+    exprGROUPS  go to state 199
+    exprGROUP   go to state 83
+
+
+State 199
+
+   28 expr: LPAR DEFRULE NAME exprEVENTS LPAR TEST exprCOMPARISON RPAR ARROW LPAR PRINTOUT LPAR exprGROUPS • RPAR RPAR RPAR
+
+    RPAR  shift, and go to state 200
+
+
+State 200
+
+   28 expr: LPAR DEFRULE NAME exprEVENTS LPAR TEST exprCOMPARISON RPAR ARROW LPAR PRINTOUT LPAR exprGROUPS RPAR • RPAR RPAR
+
+    RPAR  shift, and go to state 201
+
+
+State 201
+
+   28 expr: LPAR DEFRULE NAME exprEVENTS LPAR TEST exprCOMPARISON RPAR ARROW LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR • RPAR
+
+    RPAR  shift, and go to state 202
+
+
+State 202
+
+   28 expr: LPAR DEFRULE NAME exprEVENTS LPAR TEST exprCOMPARISON RPAR ARROW LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR RPAR •
+
+    $default  reduce using rule 28 (expr)

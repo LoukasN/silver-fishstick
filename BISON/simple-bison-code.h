@@ -67,15 +67,16 @@ extern int yydebug;
     DEFRULE = 268,                 /* DEFRULE  */
     PRINTOUT = 269,                /* PRINTOUT  */
     PLUS = 270,                    /* PLUS  */
-    DELIMITER = 271,               /* DELIMITER  */
-    NEWLINE = 272,                 /* NEWLINE  */
-    MINUS = 273,                   /* MINUS  */
-    MULT = 274,                    /* MULT  */
-    DIV = 275,                     /* DIV  */
-    EQUALS = 276,                  /* EQUALS  */
-    LPAR = 277,                    /* LPAR  */
-    RPAR = 278,                    /* RPAR  */
-    TOKEN_ERROR = 279              /* TOKEN_ERROR  */
+    MINUS = 271,                   /* MINUS  */
+    MULT = 272,                    /* MULT  */
+    DIV = 273,                     /* DIV  */
+    EQUALS = 274,                  /* EQUALS  */
+    LPAR = 275,                    /* LPAR  */
+    RPAR = 276,                    /* RPAR  */
+    DELIMITER = 277,               /* DELIMITER  */
+    NEWLINE = 278,                 /* NEWLINE  */
+    TOKEN_ERROR = 279,             /* TOKEN_ERROR  */
+    ARROW = 280                    /* ARROW  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -84,13 +85,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 28 "simple-bison-code.y"
+#line 33 "simple-bison-code.y"
 
     int intVal;
     double doubleVal;
     char *strVal;
 
-#line 94 "simple-bison-code.h"
+#line 95 "simple-bison-code.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
