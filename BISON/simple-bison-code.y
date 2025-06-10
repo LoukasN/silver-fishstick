@@ -126,20 +126,12 @@ exprINT:
         ;
 
 exprDOUBLE:
-        DOUBLE {  }
+        DOUBLE { }
         | VARIABLE { }
         | LPAR PLUS exprDOUBLE exprDOUBLE RPAR { }
         | LPAR MINUS exprDOUBLE exprDOUBLE RPAR { }
         | LPAR MULT exprDOUBLE exprDOUBLE RPAR { }
         | LPAR DIV exprDOUBLE exprDOUBLE RPAR { }
-        | LPAR PLUS exprINT exprDOUBLE RPAR { }
-        | LPAR PLUS exprDOUBLE exprINT RPAR { }
-        | LPAR MINUS exprINT exprDOUBLE RPAR { }
-        | LPAR MINUS exprDOUBLE exprINT RPAR { }
-        | LPAR MULT exprINT exprDOUBLE RPAR { }
-        | LPAR MULT exprDOUBLE exprINT RPAR { }
-        | LPAR DIV exprINT exprDOUBLE RPAR { }
-        | LPAR DIV exprDOUBLE exprINT RPAR { }
         ;
 
 exprCOMPARISON:
@@ -176,13 +168,13 @@ exprELEMENTS:
 %%
 
 void yyerror(const char *msg) {
-    fprintf(stderr, "Bison ERROR on line: %d with error message: %s\n", line, msg);
+    fprintf(stderr, "ERROR on line: %d with error message: %s\n", line, msg);
     countFatalErrors++;
 }
 
 /* Όταν ξεκινήσει το πρόγραμμα καλεί απευθείας το yyparse() για να
 ξεκινήσει η ανάλυση */
-int main(void)  {
+int main(int argc, char** argv)  {
         yyparse();
         printf("\n");
         /* Αποτελέσματα λεκτικής και συντακτικής ανάλυσης */

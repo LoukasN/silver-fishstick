@@ -71,6 +71,6 @@ NAME            [A-Za-z][A-Za-z0-9_-]*
 
 
 .               { printf("Not recognized token: %s\n", yytext); countWrongTokens++; BEGIN(error); return TOKEN_ERROR; }
-<error>.        { countWrongTokens++; }
+<error>.        { }
 <error>\n       { line++; BEGIN(0); }
 %%
