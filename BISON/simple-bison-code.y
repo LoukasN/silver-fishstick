@@ -178,10 +178,10 @@ int main(int argc, char** argv)  {
         yyparse();
         printf("\n");
         /* Αποτελέσματα λεκτικής και συντακτικής ανάλυσης */
-        printf("Correct tokens = %d\n", countCorrectTokens);
-        printf("Correct expressions = %d\n", countCorrectExpr);
-        printf("Wrong tokens = %d\n", countWrongTokens);
-        printf("Wrong expressions = %d\n", countWrongExpr);
-        printf("Fatal error(s) = %d\n", countFatalErrors);
+        printf("ΣΩΣΤΕΣ ΛΕΞΕΙΣ: %d\n", countCorrectTokens);
+        printf("ΣΩΣΤΕΣ ΕΚΦΡΑΣΕΙΣ = %d\n", countCorrectExpr);
+        printf("ΛΑΘΟΣ ΛΕΞΕΙΣ = %d\n", countWrongTokens);
+        printf("ΛΑΘΟΣ ΕΚΦΡΑΣΕΙΣ = %d\n", countWrongExpr);
+        printf("ΣΗΜΑΝΤΙΚΑ ΛΑΘΗ = %d\n", countFatalErrors);
         return 0;
 }
