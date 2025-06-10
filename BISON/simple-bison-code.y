@@ -46,10 +46,6 @@
 %token DELIMITER NEWLINE TOKEN_ERROR ARROW
 
 /* Δηλώσεις για τύπους των tokens*/
-%type <intVal> exprINT 
-%type <doubleVal> exprDOUBLE
-%type <strVal> expr
-
 /* Προτεραιότητες των tokens (Αύξουσα σειρά) */
 %left EQUALS
 %left PLUS MINUS
@@ -65,13 +61,13 @@ program:
 
 line:
         NEWLINE { }
-        | exprERRORCALC { countWrongExpr++; }
-        | exprERRORCOMP { countWrongExpr++; }
         | expr NEWLINE { countCorrectExpr++; }
         | exprINT NEWLINE { countCorrectExpr++; }
         | exprDOUBLE NEWLINE { countCorrectExpr++; }
         | exprCOMPARISON NEWLINE { countCorrectExpr++; }
         | exprEVENTS NEWLINE { countCorrectExpr++; }
+        | exprERRORCALC { countWrongExpr++; }
+        | exprERRORCOMP { countWrongExpr++; }
         | error NEWLINE {  countWrongExpr++; yyerrok; }
         ;
 
@@ -96,10 +92,18 @@ expr:
         | STRING { }
         | NAME { }
         | LPAR BIND VARIABLE exprVALUE RPAR { }
-        | LPAR TEST exprCOMPARISON RPAR { }
+        | exprTEST { }
         | LPAR DEFFACTS NAME exprEVENTS RPAR { }
-        | LPAR DEFRULE NAME exprEVENTS LPAR TEST exprCOMPARISON RPAR ARROW LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR RPAR { }
-        | LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR { }
+        | LPAR DEFRULE NAME exprGROUP exprTEST ARROW exprPRINT RPAR { }
+        | exprPRINT { }
+        ;
+
+exprTEST:
+        LPAR TEST exprCOMPARISON RPAR { }
+        ;
+
+exprPRINT:
+        LPAR PRINTOUT LPAR exprGROUPS RPAR RPAR { }
         ;
 
 exprVALUE:
@@ -113,7 +117,7 @@ exprVALUE:
         ;
 
 exprINT:
-        INTCONST {  }
+        INTCONST { }
         | VARIABLE { }
         | LPAR PLUS exprINT exprINT RPAR { }
         | LPAR MINUS exprINT exprINT RPAR { }
@@ -169,7 +173,6 @@ exprELEMENTS:
         | STRING exprELEMENTS
         | VARIABLE exprELEMENTS
         ;
-
 %%
 
 void yyerror(const char *msg) {

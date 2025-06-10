@@ -17,7 +17,7 @@
 /* Definitions για τα tokens που δημιουργούνται αυτόματα από το simple-bison-code.y */
 #include "simple-bison-code.h"
 int line = 1;
-/* Μετρητές για αναγνώριση λαθών και μη αποδεκτών tokens*/
+/* Μετρητές για αναγνώριση λαθών και μη αποδεκτών tokens από το flex */
 int countWrongTokens = 0;
 int countCorrectTokens = 0;
 
